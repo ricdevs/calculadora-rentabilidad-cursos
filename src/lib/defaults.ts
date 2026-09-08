@@ -1,0 +1,91 @@
+import type { ChartVisibility, CourseConfig } from '@/lib/types'
+
+export const COURSE_COLORS = [
+  '#0C1F3A',
+  '#C9A227',
+  '#2F6F5E',
+  '#8C4A32',
+  '#4A6FA5',
+  '#6B3F69',
+] as const
+
+export const defaultChartVisibility: ChartVisibility = {
+  costsRevenue: true,
+  payoff: true,
+  costMix: false,
+  margin: false,
+  breakEven: true,
+}
+
+export const exampleCourses: CourseConfig[] = [
+  {
+    id: 'grupo-anual-b2',
+    name: 'Grupo anual B2',
+    color: COURSE_COLORS[0],
+    pricePerStudent: 780,
+    hoursPerStudent: 72,
+    classSize: 8,
+    classDurationHours: 1.5,
+    teacherHourlyCost: 22,
+    customerAcquisitionCost: 70,
+  },
+  {
+    id: 'particular-c1',
+    name: 'Particular C1',
+    color: COURSE_COLORS[1],
+    pricePerStudent: 1260,
+    hoursPerStudent: 36,
+    classSize: 1,
+    classDurationHours: 1,
+    teacherHourlyCost: 28,
+    customerAcquisitionCost: 50,
+  },
+  {
+    id: 'intensivo-verano',
+    name: 'Intensivo verano',
+    color: COURSE_COLORS[2],
+    pricePerStudent: 390,
+    hoursPerStudent: 32,
+    classSize: 6,
+    classDurationHours: 2,
+    teacherHourlyCost: 22,
+    customerAcquisitionCost: 40,
+  },
+  {
+    id: 'empresa-24-sem',
+    name: 'Empresa 24 semanas',
+    color: COURSE_COLORS[3],
+    pricePerStudent: 890,
+    hoursPerStudent: 48,
+    classSize: 9,
+    classDurationHours: 2,
+    teacherHourlyCost: 30,
+    customerAcquisitionCost: 120,
+  },
+]
+
+export function nextCourseColor(existing: CourseConfig[]): string {
+  return COURSE_COLORS[existing.length % COURSE_COLORS.length]
+}
+
+export function createBlankCourse(existing: CourseConfig[]): CourseConfig {
+  return {
+    id: crypto.randomUUID(),
+    name: `Nuevo escenario ${existing.length + 1}`,
+    color: nextCourseColor(existing),
+    pricePerStudent: 780,
+    hoursPerStudent: 72,
+    classSize: 8,
+    classDurationHours: 1.5,
+    teacherHourlyCost: 22,
+    customerAcquisitionCost: 70,
+  }
+}
+
+export function duplicateCourse(course: CourseConfig): CourseConfig {
+  return {
+    ...course,
+    id: crypto.randomUUID(),
+    name: `${course.name} (copia)`,
+  }
+}
