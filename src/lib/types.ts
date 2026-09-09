@@ -5,13 +5,11 @@ export type CourseConfig = {
   pricePerStudent: number
   hoursPerStudent: number
   classSize: number
-  classDurationHours: number
   teacherHourlyCost: number
   customerAcquisitionCost: number
 }
 
 export type CourseMetrics = {
-  sessions: number
   teacherHours: number
   teacherCostPerGroup: number
   teacherCostPerStudent: number

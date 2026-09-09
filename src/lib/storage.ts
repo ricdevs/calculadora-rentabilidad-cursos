@@ -38,7 +38,6 @@ function isCourse(value: unknown): value is CourseConfig {
     typeof row.pricePerStudent === 'number' &&
     typeof row.hoursPerStudent === 'number' &&
     typeof row.classSize === 'number' &&
-    typeof row.classDurationHours === 'number' &&
     typeof row.teacherHourlyCost === 'number' &&
     typeof row.customerAcquisitionCost === 'number'
   )
@@ -50,9 +49,22 @@ function isContract(value: unknown): value is Contract {
   return typeof row.name === 'string' && typeof row.company === 'string'
 }
 
+function pickCourse(row: CourseConfig): CourseConfig {
+  return {
+    id: row.id,
+    name: row.name,
+    color: row.color,
+    pricePerStudent: row.pricePerStudent,
+    hoursPerStudent: row.hoursPerStudent,
+    classSize: row.classSize,
+    teacherHourlyCost: row.teacherHourlyCost,
+    customerAcquisitionCost: row.customerAcquisitionCost,
+  }
+}
+
 function sanitizeCourses(value: unknown): CourseConfig[] {
   if (!Array.isArray(value)) return exampleCourses
-  const courses = value.filter(isCourse)
+  const courses = value.filter(isCourse).map(pickCourse)
   return courses.length > 0 ? courses : exampleCourses
 }
 

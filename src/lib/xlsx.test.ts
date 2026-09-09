@@ -26,12 +26,12 @@ describe('xlsx export', () => {
     expect(firstGroup.getCell(2).value).toBe(exampleContract.company)
     expect(firstGroup.getCell(3).value).toBe('Grupo A · B2 anual')
     expect(firstGroup.getCell(4).value).toBe(780)
-    expect(firstGroup.getCell(18).numFmt).toBe('0.0%')
+    expect(firstGroup.getCell(16).numFmt).toBe('0.0%')
 
     const total = sheet!.getRow(sheet!.rowCount)
     expect(total.getCell(3).value).toBe('TOTAL CONTRATO')
     expect(total.getCell(6).value).toBe(24)
-    expect(total.getCell(16).value).toBe(
+    expect(total.getCell(14).value).toBe(
       780 * 8 + 1260 * 1 + 390 * 6 + 890 * 9,
     )
 

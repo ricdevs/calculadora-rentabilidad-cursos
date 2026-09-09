@@ -54,9 +54,6 @@ export function RatiosTable({
               <TableHead className="sticky left-0 z-10 min-w-[140px] bg-muted/40">
                 Grupo
               </TableHead>
-              <TableHead title="Horas del alumno ÷ duración de la clase">
-                Sesiones
-              </TableHead>
               <TableHead>Horas profesor</TableHead>
               <TableHead>Coste prof. / grupo</TableHead>
               <TableHead>Coste prof. / alumno</TableHead>
@@ -107,9 +104,6 @@ export function RatiosTable({
                       />
                       <span className="font-medium">{row.name}</span>
                     </div>
-                  </TableCell>
-                  <TableCell className="tabular-nums">
-                    {formatNumber(row.metrics.sessions, 1)}
                   </TableCell>
                   <TableCell className="tabular-nums">
                     {formatNumber(row.metrics.teacherHours, 1)}
@@ -195,8 +189,9 @@ export function RatiosTable({
               <TableCell className="sticky left-0 z-10 bg-muted/50 font-medium">
                 Contrato ({totals.groupCount} grupos · {totals.studentCount} alum.)
               </TableCell>
-              <TableCell />
-              <TableCell />
+              <TableCell className="tabular-nums">
+                {formatNumber(totals.teacherHours, 1)}
+              </TableCell>
               <TableCell className="tabular-nums">
                 {formatEuro(totals.teacherCost)}
               </TableCell>

@@ -6,9 +6,9 @@ Los datos se quedan en el navegador. No hay login ni servidor.
 
 ## Qué hace
 
-1. **Configuraciones de curso** (siempre visible) — nombre del acuerdo, empresa, y una fila por cada grupo: horas por alumno, tamaño de clase, duración, coste del profesor (€/h), CAC y precio.
+1. **Configuraciones de curso** (siempre visible) — nombre del acuerdo, empresa, y una fila por cada grupo: horas por alumno, tamaño de clase, coste del profesor (€/h), CAC y precio.
 2. **Totales del contrato** — ingresos, costes, contribución, margen, número de grupos, alumnos y horas de profesor.
-3. **Rentabilidades y ratios** — sesiones, coste profesor/alumno, beneficio, margen, ROI y alumnos mínimos para cubrir profesor + CAC, por grupo y al pie del contrato.
+3. **Rentabilidades y ratios** — coste profesor/alumno, beneficio, margen, ROI y alumnos mínimos para cubrir profesor + CAC, por grupo y al pie del contrato.
 4. **Análisis de configuración** — gráfico de líneas de un grupo, con el cruce ingresos / coste total (punto de equilibrio) y deslizadores en tiempo real.
 5. **Gráficos conmutables** — costes vs ingresos, beneficio, composición de costes, margen y equilibrio vs tamaño actual.
 
@@ -47,7 +47,6 @@ También puedes publicar la carpeta `dist/` a mano después de `npm run build`.
 
 | Métrica | Cálculo |
 | --- | --- |
-| Sesiones | horas alumno ÷ duración de la clase |
 | Coste profesor / grupo | horas alumno × €/h profesor |
 | Coste profesor / alumno | coste profesor del grupo ÷ tamaño de clase |
 | Ingresos / grupo | precio × tamaño de clase |

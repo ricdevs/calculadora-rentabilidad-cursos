@@ -4,14 +4,13 @@ export function Formulas() {
       <div className="max-w-3xl space-y-3">
         <p>
           Un profesor está con el grupo durante <strong>todas las horas del
-          alumno</strong>. El tamaño de clase reparte ese coste entre más
-          personas. El CAC se aplica por alumno matriculado. Los totales del
-          contrato suman todos los grupos del acuerdo.
+          alumno</strong>. La duración de cada sesión no entra en el margen: el
+          coste es el de esas horas, no el de cuántas clases se partan. El
+          tamaño de clase reparte ese coste entre más personas. El CAC se
+          aplica por alumno matriculado. Los totales del contrato suman todos
+          los grupos del acuerdo.
         </p>
         <ul className="list-disc space-y-1 pl-5">
-          <li>
-            Sesiones = horas por alumno ÷ duración de la clase
-          </li>
           <li>
             Coste profesor / grupo = horas por alumno × €/hora del profesor
           </li>

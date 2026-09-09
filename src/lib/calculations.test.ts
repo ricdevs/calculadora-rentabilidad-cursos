@@ -14,7 +14,6 @@ const acceptance: CourseConfig = {
   pricePerStudent: 780,
   hoursPerStudent: 72,
   classSize: 8,
-  classDurationHours: 1.5,
   teacherHourlyCost: 22,
   customerAcquisitionCost: 70,
 }
@@ -23,7 +22,6 @@ describe('computeMetrics', () => {
   it('matches the Academia Georgetown acceptance scenario', () => {
     const m = computeMetrics(acceptance)
 
-    expect(m.sessions).toBe(48)
     expect(m.teacherHours).toBe(72)
     expect(m.teacherCostPerGroup).toBe(1584)
     expect(m.teacherCostPerStudent).toBe(198)
@@ -62,10 +60,10 @@ describe('computeMetrics', () => {
     expect(m.profitPerGroup).toBeLessThan(0)
   })
 
-  it('handles zero duration without throwing', () => {
-    const m = computeMetrics({ ...acceptance, classDurationHours: 0 })
-    expect(m.sessions).toBe(0)
-    expect(m.teacherCostPerGroup).toBe(1584)
+  it('handles zero hours without throwing', () => {
+    const m = computeMetrics({ ...acceptance, hoursPerStudent: 0 })
+    expect(m.teacherHours).toBe(0)
+    expect(m.teacherCostPerGroup).toBe(0)
   })
 })
 
@@ -78,7 +76,6 @@ describe('computePortfolio', () => {
       pricePerStudent: 1260,
       hoursPerStudent: 36,
       classSize: 1,
-      classDurationHours: 1,
       teacherHourlyCost: 28,
       customerAcquisitionCost: 50,
     }

@@ -18,12 +18,10 @@ function safeDivide(numerator: number, denominator: number): number | null {
 export function computeMetrics(config: CourseConfig): CourseMetrics {
   const hours = Math.max(0, config.hoursPerStudent)
   const size = Math.max(0, config.classSize)
-  const duration = Math.max(0, config.classDurationHours)
   const teacherRate = Math.max(0, config.teacherHourlyCost)
   const cac = Math.max(0, config.customerAcquisitionCost)
   const price = Math.max(0, config.pricePerStudent)
 
-  const sessions = safeDivide(hours, duration) ?? 0
   const teacherHours = hours
   const teacherCostPerGroup = teacherHours * teacherRate
   const teacherCostPerStudent = safeDivide(teacherCostPerGroup, size) ?? 0
@@ -40,7 +38,6 @@ export function computeMetrics(config: CourseConfig): CourseMetrics {
       : null
 
   return {
-    sessions,
     teacherHours,
     teacherCostPerGroup,
     teacherCostPerStudent,

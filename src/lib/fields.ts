@@ -2,11 +2,10 @@ export type NumericCourseKey =
   | 'pricePerStudent'
   | 'hoursPerStudent'
   | 'classSize'
-  | 'classDurationHours'
   | 'teacherHourlyCost'
   | 'customerAcquisitionCost'
 
-export type SweepAxis = Exclude<NumericCourseKey, 'classDurationHours'>
+export type SweepAxis = NumericCourseKey
 
 export type FieldSpec = {
   key: NumericCourseKey
@@ -49,16 +48,6 @@ export const CONFIG_FIELDS: FieldSpec[] = [
     step: 1,
     sweepStep: 1,
     unit: 'alum.',
-  },
-  {
-    key: 'classDurationHours',
-    label: 'Duración clase (h)',
-    shortLabel: 'Duración',
-    min: 0.5,
-    max: 4,
-    step: 0.5,
-    sweepStep: 0.5,
-    unit: 'h',
   },
   {
     key: 'teacherHourlyCost',

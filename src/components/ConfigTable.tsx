@@ -1,4 +1,4 @@
-import { SliderField } from '@/components/SliderField'
+import { NumberField } from '@/components/NumberField'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -44,14 +44,15 @@ function FieldGrid({
           <span className="text-muted-foreground text-[11px] leading-tight">
             {field.label}
           </span>
-          <SliderField
-            spec={field}
+          <NumberField
+            min={0}
+            step={field.step}
             value={group[field.key]}
             ariaLabel={`${group.name}: ${field.label}`}
             invalid={
               field.key === 'classSize' && group.classSize > PUBLIC_GROUP_SIZE_CAP
             }
-            className="min-w-0"
+            className="w-full"
             onChange={(value) => onChange(group.id, { [field.key]: value })}
           />
         </label>
@@ -80,9 +81,10 @@ export function ConfigTable({
           </h2>
           <p className="text-muted-foreground mt-1 max-w-2xl text-sm">
             Un acuerdo comercial puede incluir varios grupos de distinto tamaño
-            y duración. Cada fila es un componente de este contrato. Los grupos
+            y horas. Cada fila es un componente de este contrato. Los grupos
             públicos de la academia son de {PUBLIC_GROUP_SIZE_CAP} alumnos como
-            máximo.
+            máximo. Para explorar un grupo con deslizadores, usa el análisis de
+            configuración.
           </p>
         </div>
         <Button onClick={onAdd} className="shrink-0">
@@ -213,14 +215,16 @@ export function ConfigTable({
                     {CONFIG_FIELDS.map((field) => (
                       <TableCell key={field.key}>
                         <div className="flex flex-col gap-1">
-                          <SliderField
-                            spec={field}
+                          <NumberField
+                            min={0}
+                            step={field.step}
                             value={group[field.key]}
                             ariaLabel={`${group.name}: ${field.label}`}
                             invalid={
                               field.key === 'classSize' &&
                               group.classSize > PUBLIC_GROUP_SIZE_CAP
                             }
+                            className="w-full"
                             onChange={(value) =>
                               onChange(group.id, { [field.key]: value })
                             }
