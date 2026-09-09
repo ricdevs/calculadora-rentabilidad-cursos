@@ -93,6 +93,14 @@ export function computePortfolio(configs: CourseConfig[]): PortfolioTotals {
   const cac = rows.reduce((sum, row) => sum + row.metrics.cacPerGroup, 0)
   const totalCost = teacherCost + cac
   const profit = revenue - totalCost
+  const studentCount = configs.reduce(
+    (sum, config) => sum + Math.max(0, config.classSize),
+    0,
+  )
+  const teacherHours = rows.reduce(
+    (sum, row) => sum + row.metrics.teacherHours,
+    0,
+  )
 
   return {
     revenue,
@@ -104,7 +112,9 @@ export function computePortfolio(configs: CourseConfig[]): PortfolioTotals {
     roiPct: safeDivide(profit, totalCost) ?? 0,
     teacherShareOfRevenue: safeDivide(teacherCost, revenue) ?? 0,
     cacShareOfRevenue: safeDivide(cac, revenue) ?? 0,
-    courseCount: configs.length,
+    groupCount: configs.length,
+    studentCount,
+    teacherHours,
   }
 }
 

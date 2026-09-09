@@ -2,6 +2,7 @@ import { ConfigTable } from '@/components/ConfigTable'
 import { Formulas } from '@/components/Formulas'
 import { Header } from '@/components/Header'
 import { RatiosTable } from '@/components/RatiosTable'
+import { SectionCollapsible } from '@/components/SectionCollapsible'
 import { SummaryCards } from '@/components/SummaryCards'
 import { Button } from '@/components/ui/button'
 import { computePortfolio, withMetrics } from '@/lib/calculations'
@@ -9,10 +10,18 @@ import { downloadCsv } from '@/lib/csv'
 import {
   createBlankCourse,
   duplicateCourse,
+  exampleContract,
   exampleCourses,
 } from '@/lib/defaults'
-import { loadState, saveState } from '@/lib/storage'
-import type { ChartId, ChartVisibility, CourseConfig } from '@/lib/types'
+import { loadFolds, loadState, saveFolds, saveState } from '@/lib/storage'
+import type {
+  ChartId,
+  ChartVisibility,
+  Contract,
+  CourseConfig,
+  SectionFolds,
+  SectionId,
+} from '@/lib/types'
 import { Download, RotateCcw } from 'lucide-react'
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 
@@ -36,15 +45,21 @@ function ChartFallback() {
 
 export default function App() {
   const initial = useMemo(() => loadState(), [])
+  const [contract, setContract] = useState<Contract>(initial.contract)
   const [courses, setCourses] = useState<CourseConfig[]>(initial.courses)
   const [charts, setCharts] = useState<ChartVisibility>(initial.charts)
+  const [folds, setFolds] = useState<SectionFolds>(() => loadFolds())
   const [selectedId, setSelectedId] = useState<string | null>(
     initial.courses[0]?.id ?? null,
   )
 
   useEffect(() => {
-    saveState(courses, charts)
-  }, [courses, charts])
+    saveState(contract, courses, charts)
+  }, [contract, courses, charts])
+
+  useEffect(() => {
+    saveFolds(folds)
+  }, [folds])
 
   const activeId =
     selectedId && courses.some((course) => course.id === selectedId)
@@ -62,21 +77,30 @@ export default function App() {
     )
   }
 
+  function setFold(id: SectionId, open: boolean) {
+    setFolds((current) => ({ ...current, [id]: open }))
+  }
+
+  function restoreExamples() {
+    setContract({ ...exampleContract })
+    setCourses(exampleCourses.map((course) => ({ ...course })))
+  }
+
   return (
     <div className="min-h-svh">
       <Header />
       <main className="mx-auto flex max-w-[1440px] flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            Los cuatro escenarios de partida son <strong>ilustrativos</strong>.
-            Sustitúyelos por tarifas, €/h de profesor y CAC reales antes de
-            cotizar o de abrir un grupo.
+            El ejemplo de partida es un <strong>acuerdo ilustrativo</strong> con
+            varios grupos. Sustituye empresa, tarifas, €/h de profesor y CAC
+            reales antes de cotizar.
           </p>
           <div className="flex shrink-0 flex-wrap gap-2">
             <Button
               variant="outline"
               className="bg-white"
-              onClick={() => downloadCsv(courses)}
+              onClick={() => downloadCsv(contract, courses)}
               disabled={courses.length === 0}
             >
               <Download data-icon="inline-start" />
@@ -85,19 +109,35 @@ export default function App() {
             <Button
               variant="outline"
               className="bg-white"
-              onClick={() => setCourses(exampleCourses.map((c) => ({ ...c })))}
+              onClick={restoreExamples}
             >
               <RotateCcw data-icon="inline-start" />
-              Restaurar ejemplos
+              Restaurar ejemplo
             </Button>
           </div>
         </div>
 
-        <SummaryCards totals={totals} />
+        <SectionCollapsible
+          id="summary"
+          title="Totales del contrato"
+          description={
+            contract.company
+              ? `${contract.name} · ${contract.company}. Suma de todos los grupos del acuerdo.`
+              : `${contract.name}. Suma de todos los grupos del acuerdo.`
+          }
+          open={folds.summary}
+          onOpenChange={(open) => setFold('summary', open)}
+        >
+          <SummaryCards totals={totals} />
+        </SectionCollapsible>
 
         <ConfigTable
-          courses={courses}
+          contract={contract}
+          groups={courses}
           selectedId={activeId}
+          onContractChange={(patch) =>
+            setContract((current) => ({ ...current, ...patch }))
+          }
           onSelect={setSelectedId}
           onChange={patchCourse}
           onAdd={() =>
@@ -114,28 +154,60 @@ export default function App() {
           }
         />
 
-        <Suspense fallback={<ChartFallback />}>
-          <AnalysisChart
-            courses={courses}
-            selectedId={activeId}
-            onSelect={setSelectedId}
-            onChange={patchCourse}
-          />
-        </Suspense>
+        <SectionCollapsible
+          id="analysis"
+          title="Análisis de configuración"
+          description="Elige un grupo del contrato, mueve los deslizadores y mira dónde se cruzan ingresos y coste total (punto de equilibrio)."
+          open={folds.analysis}
+          onOpenChange={(open) => setFold('analysis', open)}
+        >
+          <Suspense fallback={<ChartFallback />}>
+            <AnalysisChart
+              courses={courses}
+              selectedId={activeId}
+              onSelect={setSelectedId}
+              onChange={patchCourse}
+            />
+          </Suspense>
+        </SectionCollapsible>
 
-        <RatiosTable rows={rows} totals={totals} />
+        <SectionCollapsible
+          id="ratios"
+          title="Rentabilidades y ratios clave"
+          description="Métricas de cada grupo y, al pie, el contrato entero. Margen de contribución (profesor + CAC), no beneficio neto del centro. Verde ≥ 40 %, ámbar ≥ 20 %."
+          open={folds.ratios}
+          onOpenChange={(open) => setFold('ratios', open)}
+        >
+          <RatiosTable rows={rows} totals={totals} />
+        </SectionCollapsible>
 
-        <Suspense fallback={<ChartFallback />}>
-          <ChartsPanel
-            rows={rows}
-            visibility={charts}
-            onToggle={(id: ChartId, visible: boolean) =>
-              setCharts((current) => ({ ...current, [id]: visible }))
-            }
-          />
-        </Suspense>
+        <SectionCollapsible
+          id="charts"
+          title="Gráficos"
+          description="Comparación entre los grupos de este acuerdo. Activa solo los que te ayuden a decidir: abrir un grupo, subir precio o bajar CAC."
+          open={folds.charts}
+          onOpenChange={(open) => setFold('charts', open)}
+        >
+          <Suspense fallback={<ChartFallback />}>
+            <ChartsPanel
+              rows={rows}
+              visibility={charts}
+              onToggle={(id: ChartId, visible: boolean) =>
+                setCharts((current) => ({ ...current, [id]: visible }))
+              }
+            />
+          </Suspense>
+        </SectionCollapsible>
 
-        <Formulas />
+        <SectionCollapsible
+          id="formulas"
+          title="Cómo se calcula"
+          description="El profesor imparte el grupo durante todas las horas del alumno. El tamaño de clase diluye ese coste."
+          open={folds.formulas}
+          onOpenChange={(open) => setFold('formulas', open)}
+        >
+          <Formulas />
+        </SectionCollapsible>
 
         <p className="text-muted-foreground pb-6 text-center text-xs">
           Uso interno · Academia Georgetown · Pamplona · Los datos se guardan

@@ -84,7 +84,7 @@ export const CONFIG_FIELDS: FieldSpec[] = [
 
 export const SWEEP_AXES: { key: SweepAxis; label: string }[] = [
   { key: 'classSize', label: 'Tamaño de clase' },
-  { key: 'pricePerStudent', label: 'Precio del curso' },
+  { key: 'pricePerStudent', label: 'Precio €/alumno' },
   { key: 'teacherHourlyCost', label: 'Coste del profesor' },
   { key: 'customerAcquisitionCost', label: 'CAC' },
   { key: 'hoursPerStudent', label: 'Horas por alumno' },

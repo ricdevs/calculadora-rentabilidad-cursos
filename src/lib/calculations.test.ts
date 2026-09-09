@@ -83,7 +83,9 @@ describe('computePortfolio', () => {
       customerAcquisitionCost: 50,
     }
     const totals = computePortfolio([acceptance, particular])
-    expect(totals.courseCount).toBe(2)
+    expect(totals.groupCount).toBe(2)
+    expect(totals.studentCount).toBe(9)
+    expect(totals.teacherHours).toBe(72 + 36)
     expect(totals.revenue).toBe(6240 + 1260)
     expect(totals.teacherCost).toBe(1584 + 1008)
     expect(totals.cac).toBe(560 + 50)

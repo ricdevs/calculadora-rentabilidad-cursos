@@ -43,6 +43,11 @@ export type CourseMetrics = {
 
 export type CourseRow = CourseConfig & { metrics: CourseMetrics }
 
+export type Contract = {
+  name: string
+  company: string
+}
+
 export type PortfolioTotals = {
   revenue: number
   teacherCost: number
@@ -53,7 +58,9 @@ export type PortfolioTotals = {
   roiPct: number
   teacherShareOfRevenue: number
   cacShareOfRevenue: number
-  courseCount: number
+  groupCount: number
+  studentCount: number
+  teacherHours: number
 }
 
 export type SweepPoint = {
@@ -85,6 +92,19 @@ export type ChartId = (typeof CHART_IDS)[number]
 
 export type ChartVisibility = Record<ChartId, boolean>
 
+export const SECTION_IDS = [
+  'summary',
+  'analysis',
+  'ratios',
+  'charts',
+  'formulas',
+] as const
+
+export type SectionId = (typeof SECTION_IDS)[number]
+
+export type SectionFolds = Record<SectionId, boolean>
+
 export const PUBLIC_GROUP_SIZE_CAP = 9
 export const STORAGE_KEY = 'ag-course-profitability-v1'
-export const STORAGE_VERSION = 1
+export const FOLDS_STORAGE_KEY = 'ag-section-folds-v1'
+export const STORAGE_VERSION = 2

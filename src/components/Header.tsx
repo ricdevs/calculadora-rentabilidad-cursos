@@ -33,9 +33,10 @@ export function Header() {
               Calculadora de rentabilidad de cursos
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-primary-foreground/75">
-              Para ventas y dirección. Compara configuraciones de grupo,
-              particular, intensivo o empresa y lee márgenes, punto de equilibrio
-              y coste de profesor en el mismo sitio.
+              Para ventas y dirección. Un acuerdo con empresa puede agrupar
+              varios grupos de distinto tamaño y duración: aquí ves el contrato
+              entero y cada componente, con márgenes, equilibrio y coste de
+              profesor.
             </p>
           </div>
         </div>

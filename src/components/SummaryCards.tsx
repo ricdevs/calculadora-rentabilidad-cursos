@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatEuro, formatPct } from '@/lib/format'
+import { formatEuro, formatNumber, formatPct } from '@/lib/format'
 import type { PortfolioTotals } from '@/lib/types'
 
-const cards = [
+const moneyCards = [
   {
     key: 'revenue' as const,
-    label: 'Ingresos (cartera)',
-    hint: 'Precio × alumnos, suma de escenarios',
+    label: 'Ingresos del contrato',
+    hint: 'Precio × alumnos, suma de todos los grupos',
   },
   {
     key: 'totalCost' as const,
@@ -21,7 +21,7 @@ const cards = [
   {
     key: 'marginPct' as const,
     label: 'Margen de contribución',
-    hint: 'Sobre ingresos de la cartera',
+    hint: 'Sobre ingresos del acuerdo',
   },
 ]
 
@@ -33,31 +33,68 @@ export function SummaryCards({ totals }: { totals: PortfolioTotals }) {
     marginPct: formatPct(totals.marginPct),
   }
 
+  const counts = [
+    {
+      label: 'Grupos / módulos',
+      value: String(totals.groupCount),
+      hint: 'Componentes del acuerdo',
+    },
+    {
+      label: 'Alumnos',
+      value: formatNumber(totals.studentCount, 0),
+      hint: 'Suma de tamaños de clase',
+    },
+    {
+      label: 'Horas profesor',
+      value: formatNumber(totals.teacherHours, 0),
+      hint: 'Horas lectivas del contrato',
+    },
+  ]
+
   return (
-    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      {cards.map((card) => {
-        const isProfit = card.key === 'profit' || card.key === 'marginPct'
-        const negative = isProfit && totals.profit < 0
-        return (
-          <Card key={card.key} size="sm" className="shadow-none">
+    <div className="space-y-3">
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {moneyCards.map((card) => {
+          const isProfit = card.key === 'profit' || card.key === 'marginPct'
+          const negative = isProfit && totals.profit < 0
+          return (
+            <Card key={card.key} size="sm" className="shadow-none">
+              <CardHeader className="pb-0">
+                <CardTitle className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                  {card.label}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p
+                  className={`font-heading text-2xl font-semibold tabular-nums ${
+                    negative ? 'text-destructive' : 'text-foreground'
+                  }`}
+                >
+                  {values[card.key]}
+                </p>
+                <p className="text-muted-foreground mt-1 text-xs">{card.hint}</p>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </section>
+      <section className="grid gap-3 sm:grid-cols-3">
+        {counts.map((card) => (
+          <Card key={card.label} size="sm" className="shadow-none">
             <CardHeader className="pb-0">
               <CardTitle className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
                 {card.label}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p
-                className={`font-heading text-2xl font-semibold tabular-nums ${
-                  negative ? 'text-destructive' : 'text-foreground'
-                }`}
-              >
-                {values[card.key]}
+              <p className="font-heading text-2xl font-semibold tabular-nums">
+                {card.value}
               </p>
               <p className="text-muted-foreground mt-1 text-xs">{card.hint}</p>
             </CardContent>
           </Card>
-        )
-      })}
-    </section>
+        ))}
+      </section>
+    </div>
   )
 }

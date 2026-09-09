@@ -43,27 +43,16 @@ export function RatiosTable({
 }) {
   return (
     <section className="rounded-xl bg-card ring-1 ring-foreground/10">
-      <div className="px-4 py-4 sm:px-5">
-        <h2 className="font-heading text-lg font-semibold">
-          Rentabilidades y ratios clave
-        </h2>
-        <p className="text-muted-foreground mt-1 max-w-3xl text-sm">
-          Margen de contribución (profesor + CAC), no beneficio neto del centro.
-          El equilibrio es el mínimo de alumnos para cubrir profesor y
-          adquisición. Verde ≥ 40 %, ámbar ≥ 20 %.
-        </p>
-      </div>
-
       {rows.length === 0 ? (
-        <p className="text-muted-foreground px-5 pb-5 text-sm">
-          Añade un escenario para ver ratios.
+        <p className="text-muted-foreground px-5 py-4 text-sm">
+          Añade un grupo para ver ratios.
         </p>
       ) : (
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40 hover:bg-muted/40">
               <TableHead className="sticky left-0 z-10 min-w-[140px] bg-muted/40">
-                Curso
+                Grupo
               </TableHead>
               <TableHead title="Horas del alumno ÷ duración de la clase">
                 Sesiones
@@ -204,7 +193,7 @@ export function RatiosTable({
           <TableFooter>
             <TableRow>
               <TableCell className="sticky left-0 z-10 bg-muted/50 font-medium">
-                Cartera ({totals.courseCount})
+                Contrato ({totals.groupCount} grupos · {totals.studentCount} alum.)
               </TableCell>
               <TableCell />
               <TableCell />

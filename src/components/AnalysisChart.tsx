@@ -89,7 +89,7 @@ export function AnalysisChart({
   if (!selected) {
     return (
       <section className="rounded-xl bg-card p-5 text-sm text-muted-foreground ring-1 ring-foreground/10">
-        Añade un escenario para analizar la configuración.
+        Añade un grupo para analizar la configuración.
       </section>
     )
   }
@@ -102,16 +102,7 @@ export function AnalysisChart({
   return (
     <section className="rounded-xl bg-card ring-1 ring-foreground/10">
       <div className="px-4 py-4 sm:px-5">
-        <h2 className="font-heading text-lg font-semibold">
-          Análisis de configuración
-        </h2>
-        <p className="text-muted-foreground mt-1 max-w-3xl text-sm">
-          Mueve los deslizadores y mira dónde se cruzan ingresos y coste total
-          (punto de equilibrio). El resto de ratios se actualizan al instante
-          en las tablas.
-        </p>
-
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
           {courses.map((course) => (
             <button
               key={course.id}

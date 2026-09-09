@@ -23,7 +23,7 @@ const chartMeta: { id: ChartId; label: string; hint: string }[] = [
   {
     id: 'payoff',
     label: 'Beneficio (payoff)',
-    hint: 'Contribución por escenario después de profesor y CAC',
+    hint: 'Contribución de cada grupo después de profesor y CAC',
   },
   {
     id: 'costMix',
@@ -98,12 +98,7 @@ export function ChartsPanel({
   return (
     <section className="rounded-xl bg-card ring-1 ring-foreground/10">
       <div className="px-4 py-4 sm:px-5">
-        <h2 className="font-heading text-lg font-semibold">Gráficos</h2>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Activa solo los que te ayuden a decidir: abrir un grupo, subir precio o
-          bajar CAC.
-        </p>
-        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-3">
+        <div className="flex flex-wrap gap-x-5 gap-y-3">
           {chartMeta.map((chart) => (
             <label
               key={chart.id}
@@ -131,7 +126,7 @@ export function ChartsPanel({
       {rows.length === 0 || active.length === 0 ? (
         <p className="text-muted-foreground px-5 pb-5 text-sm">
           {rows.length === 0
-            ? 'Añade un escenario para ver gráficos.'
+            ? 'Añade un grupo para ver gráficos.'
             : 'Activa al menos un gráfico. Las tablas siguen siendo la fuente de verdad.'}
         </p>
       ) : (
@@ -152,7 +147,7 @@ export function ChartsPanel({
           ) : null}
 
           {visibility.payoff ? (
-            <ChartCard title="Beneficio por escenario">
+            <ChartCard title="Beneficio por grupo">
               <BarChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e4d9c8" />
                 <XAxis dataKey="name" tick={axisTick} interval={0} />

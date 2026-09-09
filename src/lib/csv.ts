@@ -1,8 +1,10 @@
-import { computeMetrics } from '@/lib/calculations'
-import type { CourseConfig } from '@/lib/types'
+import { computeMetrics, computePortfolio } from '@/lib/calculations'
+import type { Contract, CourseConfig } from '@/lib/types'
 
 const headers = [
-  'Curso',
+  'Acuerdo',
+  'Empresa',
+  'Grupo',
   'Precio €/alumno',
   'Horas/alumno',
   'Tamaño clase',
@@ -38,19 +40,24 @@ function cell(value: string | number | null): string {
   return `"${text}"`
 }
 
-export function coursesToCsv(courses: CourseConfig[]): string {
+export function coursesToCsv(
+  contract: Contract,
+  groups: CourseConfig[],
+): string {
   const lines = [headers.map((h) => `"${h}"`).join(';')]
-  for (const course of courses) {
-    const m = computeMetrics(course)
+  for (const group of groups) {
+    const m = computeMetrics(group)
     lines.push(
       [
-        cell(course.name),
-        cell(course.pricePerStudent),
-        cell(course.hoursPerStudent),
-        cell(course.classSize),
-        cell(course.classDurationHours),
-        cell(course.teacherHourlyCost),
-        cell(course.customerAcquisitionCost),
+        cell(contract.name),
+        cell(contract.company),
+        cell(group.name),
+        cell(group.pricePerStudent),
+        cell(group.hoursPerStudent),
+        cell(group.classSize),
+        cell(group.classDurationHours),
+        cell(group.teacherHourlyCost),
+        cell(group.customerAcquisitionCost),
         cell(m.sessions),
         cell(m.teacherHours),
         cell(m.teacherCostPerGroup),
@@ -71,17 +78,50 @@ export function coursesToCsv(courses: CourseConfig[]): string {
       ].join(';'),
     )
   }
+
+  const totals = computePortfolio(groups)
+  lines.push(
+    [
+      cell(contract.name),
+      cell(contract.company),
+      cell('TOTAL CONTRATO'),
+      cell(''),
+      cell(''),
+      cell(totals.studentCount),
+      cell(''),
+      cell(''),
+      cell(''),
+      cell(''),
+      cell(totals.teacherHours),
+      cell(totals.teacherCost),
+      cell(''),
+      cell(totals.cac),
+      cell(totals.totalCost),
+      cell(totals.revenue),
+      cell(totals.profit),
+      cell(totals.marginPct),
+      cell(totals.roiPct),
+      cell(''),
+      cell(''),
+      cell(totals.teacherShareOfRevenue),
+      cell(totals.cacShareOfRevenue),
+      cell(''),
+      cell(''),
+      cell(''),
+    ].join(';'),
+  )
+
   return `\uFEFF${lines.join('\n')}\n`
 }
 
-export function downloadCsv(courses: CourseConfig[]): void {
-  const blob = new Blob([coursesToCsv(courses)], {
+export function downloadCsv(contract: Contract, groups: CourseConfig[]): void {
+  const blob = new Blob([coursesToCsv(contract, groups)], {
     type: 'text/csv;charset=utf-8;',
   })
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
   anchor.href = url
-  anchor.download = 'rentabilidad-cursos-georgetown.csv'
+  anchor.download = 'rentabilidad-contrato-georgetown.csv'
   anchor.click()
   URL.revokeObjectURL(url)
 }

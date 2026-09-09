@@ -1,14 +1,12 @@
 export function Formulas() {
   return (
-    <details className="rounded-xl bg-card px-4 py-4 ring-1 ring-foreground/10 sm:px-5">
-      <summary className="font-heading cursor-pointer text-lg font-semibold">
-        Cómo se calcula
-      </summary>
-      <div className="text-muted-foreground mt-3 max-w-3xl space-y-3 text-sm">
+    <div className="text-muted-foreground rounded-xl bg-card px-4 py-4 text-sm ring-1 ring-foreground/10 sm:px-5">
+      <div className="max-w-3xl space-y-3">
         <p>
           Un profesor está con el grupo durante <strong>todas las horas del
           alumno</strong>. El tamaño de clase reparte ese coste entre más
-          personas. El CAC se aplica por alumno matriculado.
+          personas. El CAC se aplica por alumno matriculado. Los totales del
+          contrato suman todos los grupos del acuerdo.
         </p>
         <ul className="list-disc space-y-1 pl-5">
           <li>
@@ -47,6 +45,6 @@ export function Formulas() {
           que ve la empresa puede no coincidir con lo que ingresa la academia.
         </p>
       </div>
-    </details>
+    </div>
   )
 }

@@ -1,4 +1,4 @@
-import type { ChartVisibility, CourseConfig } from '@/lib/types'
+import type { ChartVisibility, Contract, CourseConfig, SectionFolds } from '@/lib/types'
 
 export const COURSE_COLORS = [
   '#0C1F3A',
@@ -17,10 +17,23 @@ export const defaultChartVisibility: ChartVisibility = {
   breakEven: true,
 }
 
+export const defaultSectionFolds: SectionFolds = {
+  summary: true,
+  analysis: true,
+  ratios: true,
+  charts: true,
+  formulas: false,
+}
+
+export const exampleContract: Contract = {
+  name: 'Plan FUNDAE 2026 — idiomas',
+  company: 'Industria Navarra S.A.',
+}
+
 export const exampleCourses: CourseConfig[] = [
   {
     id: 'grupo-anual-b2',
-    name: 'Grupo anual B2',
+    name: 'Grupo A · B2 anual',
     color: COURSE_COLORS[0],
     pricePerStudent: 780,
     hoursPerStudent: 72,
@@ -31,7 +44,7 @@ export const exampleCourses: CourseConfig[] = [
   },
   {
     id: 'particular-c1',
-    name: 'Particular C1',
+    name: 'Grupo B · particular dirección',
     color: COURSE_COLORS[1],
     pricePerStudent: 1260,
     hoursPerStudent: 36,
@@ -42,7 +55,7 @@ export const exampleCourses: CourseConfig[] = [
   },
   {
     id: 'intensivo-verano',
-    name: 'Intensivo verano',
+    name: 'Grupo C · intensivo verano',
     color: COURSE_COLORS[2],
     pricePerStudent: 390,
     hoursPerStudent: 32,
@@ -53,7 +66,7 @@ export const exampleCourses: CourseConfig[] = [
   },
   {
     id: 'empresa-24-sem',
-    name: 'Empresa 24 semanas',
+    name: 'Grupo D · in-company 24 sem.',
     color: COURSE_COLORS[3],
     pricePerStudent: 890,
     hoursPerStudent: 48,
@@ -71,7 +84,7 @@ export function nextCourseColor(existing: CourseConfig[]): string {
 export function createBlankCourse(existing: CourseConfig[]): CourseConfig {
   return {
     id: crypto.randomUUID(),
-    name: `Nuevo escenario ${existing.length + 1}`,
+    name: `Nuevo grupo ${existing.length + 1}`,
     color: nextCourseColor(existing),
     pricePerStudent: 780,
     hoursPerStudent: 72,
