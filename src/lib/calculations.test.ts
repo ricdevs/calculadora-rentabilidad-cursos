@@ -14,15 +14,15 @@ const acceptance: CourseConfig = {
   pricePerStudent: 780,
   hoursPerStudent: 72,
   classSize: 8,
-    teacherHourlyCost: 22,
-    customerAcquisitionCost: 70,
-    fundaeModality: 'none',
-  }
+  teacherHourlyCost: 22,
+  customerAcquisitionCost: 70,
+}
 
-  const testContract: Contract = {
+const testContract: Contract = {
   name: 'Test',
   company: 'Test',
   workforceBand: '10-49',
+  fundaeModality: 'none',
   fundaeCredit: null,
   trainingInWorkHours: true,
 }
@@ -87,7 +87,6 @@ describe('computePortfolio', () => {
       classSize: 1,
       teacherHourlyCost: 28,
       customerAcquisitionCost: 50,
-      fundaeModality: 'none',
     }
     const totals = computePortfolio([acceptance, particular], testContract)
     expect(totals.groupCount).toBe(2)

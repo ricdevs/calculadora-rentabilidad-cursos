@@ -31,7 +31,6 @@ export type CourseConfig = {
   classSize: number
   teacherHourlyCost: number
   customerAcquisitionCost: number
-  fundaeModality: FundaeModality
 }
 
 export type CourseMetrics = {
@@ -73,6 +72,8 @@ export type Contract = {
   name: string
   company: string
   workforceBand: WorkforceBand
+  /** Modalidad de la acción formativa de la empresa, no de cada grupo. */
+  fundaeModality: FundaeModality
   /** Crédito anual FUNDAE. `null` = no aplicar tope de crédito. */
   fundaeCredit: number | null
   /** Si la formación es en jornada, el salario cuenta como cofinanciación. */

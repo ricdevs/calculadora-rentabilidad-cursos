@@ -16,6 +16,7 @@ import {
   FUNDAE_MODALITY_OPTIONS,
   FUNDAE_PRESENCIAL_CAP,
   WORKFORCE_OPTIONS,
+  isPresencial,
 } from '@/lib/fundae'
 import { cn } from '@/lib/utils'
 import {
@@ -30,33 +31,6 @@ const selectClassName = cn(
   'h-8 w-full min-w-0 rounded-lg border border-input bg-white px-2.5 py-1 text-sm outline-none',
   'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50',
 )
-
-function FundaeSelect({
-  group,
-  onChange,
-}: {
-  group: CourseConfig
-  onChange: (id: string, patch: Partial<CourseConfig>) => void
-}) {
-  return (
-    <select
-      aria-label={`${group.name}: modalidad FUNDAE`}
-      className={selectClassName}
-      value={group.fundaeModality}
-      onChange={(event) =>
-        onChange(group.id, {
-          fundaeModality: event.target.value as FundaeModality,
-        })
-      }
-    >
-      {FUNDAE_MODALITY_OPTIONS.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
-  )
-}
 
 type Props = {
   contract: Contract
@@ -97,13 +71,25 @@ function FieldGrid({
           />
         </label>
       ))}
-      <label className="flex flex-col gap-1 sm:col-span-2">
-        <span className="text-muted-foreground text-[11px] leading-tight">
-          Modalidad FUNDAE
-        </span>
-        <FundaeSelect group={group} onChange={onChange} />
-      </label>
     </div>
+  )
+}
+
+function PresencialCapNote({
+  contract,
+  size,
+}: {
+  contract: Contract
+  size: number
+}) {
+  if (!isPresencial(contract.fundaeModality) || size <= FUNDAE_PRESENCIAL_CAP) {
+    return null
+  }
+  return (
+    <p className="mt-2 text-xs text-amber-800">
+      FUNDAE limita la presencial / aula virtual a {FUNDAE_PRESENCIAL_CAP}{' '}
+      participantes.
+    </p>
   )
 }
 
@@ -129,9 +115,10 @@ export function ConfigTable({
             Un acuerdo comercial puede incluir varios grupos de distinto tamaño
             y horas. Cada fila es un componente de este contrato. Los grupos
             públicos de la academia son de {PUBLIC_GROUP_SIZE_CAP} alumnos como
-            máximo. La bonificación FUNDAE no la cobra la academia: la empresa
-            paga la factura y descuenta el crédito de las cotizaciones (Sistema
-            Red).
+            máximo. La bonificación FUNDAE es de la <strong>empresa</strong>:
+            modalidad, plantilla y crédito se aplican a todo el acuerdo. La
+            academia cobra la factura; la empresa descuenta el crédito de las
+            cotizaciones (Sistema Red).
           </p>
         </div>
         <Button onClick={onAdd} className="shrink-0">
@@ -182,6 +169,27 @@ export function ConfigTable({
             }
           >
             {WORKFORCE_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-muted-foreground text-[11px]">
+            Modalidad FUNDAE
+          </span>
+          <select
+            aria-label="Modalidad FUNDAE de la empresa"
+            className={selectClassName}
+            value={contract.fundaeModality}
+            onChange={(event) =>
+              onContractChange({
+                fundaeModality: event.target.value as FundaeModality,
+              })
+            }
+          >
+            {FUNDAE_MODALITY_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -284,14 +292,10 @@ export function ConfigTable({
                     grupo).
                   </p>
                 ) : null}
-                {group.fundaeModality !== 'none' &&
-                group.fundaeModality !== 'teleformacion' &&
-                group.classSize > FUNDAE_PRESENCIAL_CAP ? (
-                  <p className="mt-2 text-xs text-amber-800">
-                    FUNDAE limita la presencial / aula virtual a{' '}
-                    {FUNDAE_PRESENCIAL_CAP} participantes.
-                  </p>
-                ) : null}
+                <PresencialCapNote
+                  contract={contract}
+                  size={group.classSize}
+                />
               </article>
             ))}
           </div>
@@ -304,7 +308,6 @@ export function ConfigTable({
                   {CONFIG_FIELDS.map((field) => (
                     <TableHead key={field.key}>{field.label}</TableHead>
                   ))}
-                  <TableHead className="min-w-[220px]">Modalidad FUNDAE</TableHead>
                   <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
@@ -354,21 +357,16 @@ export function ConfigTable({
                               &gt; {PUBLIC_GROUP_SIZE_CAP}
                             </Badge>
                           ) : null}
+                          {field.key === 'classSize' &&
+                          isPresencial(contract.fundaeModality) &&
+                          group.classSize > FUNDAE_PRESENCIAL_CAP ? (
+                            <Badge variant="outline" className="text-amber-800">
+                              &gt; {FUNDAE_PRESENCIAL_CAP} presencial
+                            </Badge>
+                          ) : null}
                         </div>
                       </TableCell>
                     ))}
-                    <TableCell>
-                      <div className="flex flex-col gap-1">
-                        <FundaeSelect group={group} onChange={onChange} />
-                        {group.fundaeModality !== 'none' &&
-                        group.fundaeModality !== 'teleformacion' &&
-                        group.classSize > FUNDAE_PRESENCIAL_CAP ? (
-                          <Badge variant="outline" className="text-amber-800">
-                            &gt; {FUNDAE_PRESENCIAL_CAP} presencial
-                          </Badge>
-                        ) : null}
-                      </div>
-                    </TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-1">
                         <Button

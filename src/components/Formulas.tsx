@@ -43,9 +43,11 @@ export function Formulas() {
           incluye alquiler, administración, plataforma ALTEA ni cotizaciones.
         </p>
         <p>
-          <strong>FUNDAE</strong> no paga a la academia. La empresa abona la
-          factura y después descuenta una bonificación de las cotizaciones a la
-          Seguridad Social (Sistema Red, casilla 763). El techo de cada grupo es
+          <strong>FUNDAE</strong> no paga a la academia. El crédito es de la
+          <strong>empresa</strong> (plantilla, modalidad y crédito anual del
+          acuerdo). La empresa abona la factura y después descuenta una
+          bonificación de las cotizaciones a la Seguridad Social (Sistema Red,
+          casilla 763). El techo de cada grupo usa esas reglas de empresa y es
           el mínimo de tres límites:
         </p>
         <ul className="list-disc space-y-1 pl-5">

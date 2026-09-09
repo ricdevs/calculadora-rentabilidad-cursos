@@ -6,7 +6,7 @@ Los datos se quedan en el navegador. No hay login ni servidor.
 
 ## Qué hace
 
-1. **Configuraciones de curso** (siempre visible) — nombre del acuerdo, empresa, plantilla FUNDAE, crédito anual y una fila por cada grupo: horas, tamaño, profesor, CAC, precio y modalidad bonificable.
+1. **Configuraciones de curso** (siempre visible) — nombre del acuerdo, empresa, plantilla FUNDAE, modalidad, crédito anual y una fila por cada grupo: horas, tamaño, profesor, CAC y precio.
 2. **Totales del contrato** — ingresos, costes y contribución de la academia, más bonificación FUNDAE, % cubierto y neto de la empresa.
 3. **Rentabilidades y ratios** — coste profesor/alumno, beneficio, margen, ROI, equilibrio, y columnas FUNDAE por grupo.
 4. **Análisis de configuración** — gráfico de líneas de un grupo, con el cruce ingresos / coste total (punto de equilibrio) y deslizadores en tiempo real.

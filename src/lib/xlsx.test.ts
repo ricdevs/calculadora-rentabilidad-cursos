@@ -43,9 +43,14 @@ describe('xlsx export', () => {
       'double',
     )
 
-    expect(contrato.getRow(6).getCell(15).value).toBe('Modalidad FUNDAE')
-    expect(contrato.getRow(7).getCell(15).value).toBe('Presencial superior')
-    expect(contrato.getRow(totalRow).getCell(17).value).toBeGreaterThan(0)
+    const fundaeRow = totalRow + 2
+    expect(contrato.getRow(fundaeRow).getCell(1).value).toBe(
+      'Parámetros FUNDAE (formación programada)',
+    )
+    expect(contrato.getRow(fundaeRow + 1).getCell(1).value).toBe('Modalidad')
+    expect(contrato.getRow(fundaeRow + 1).getCell(2).value).toBe(
+      'Presencial superior',
+    )
 
     const ratios = workbook.getWorksheet('Ratios')!
     expect(ratios.getRow(6).getCell(1).value).toBe('Grupo')

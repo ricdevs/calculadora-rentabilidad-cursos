@@ -17,7 +17,6 @@ const grupoB2: CourseConfig = {
   classSize: 8,
   teacherHourlyCost: 22,
   customerAcquisitionCost: 70,
-  fundaeModality: 'presencial-superior',
 }
 
 const particular: CourseConfig = {
@@ -29,7 +28,6 @@ const particular: CourseConfig = {
   classSize: 1,
   teacherHourlyCost: 28,
   customerAcquisitionCost: 50,
-  fundaeModality: 'teleformacion',
 }
 
 function contract(patch: Partial<Contract> = {}): Contract {
@@ -37,6 +35,7 @@ function contract(patch: Partial<Contract> = {}): Contract {
     name: 'Acuerdo',
     company: 'Cliente',
     workforceBand: '10-49',
+    fundaeModality: 'presencial-superior',
     fundaeCredit: null,
     trainingInWorkHours: true,
     ...patch,
@@ -85,8 +84,11 @@ describe('computeFundaeGroups', () => {
     expect(row.companyNet).toBeCloseTo(6240 * 0.1)
   })
 
-  it('uses the teleformación module with 10 % headroom for 10–49 workers', () => {
-    const [row] = computeFundaeGroups([particular], contract())
+  it('uses the company teleformación module with 10 % headroom for 10–49 workers', () => {
+    const [row] = computeFundaeGroups(
+      [particular],
+      contract({ fundaeModality: 'teleformacion' }),
+    )
     expect(row.moduleCap).toBeCloseTo(36 * 1 * 7.5 * 1.1)
     expect(row.bonus).toBeCloseTo(297)
     expect(row.companyNet).toBeCloseTo(1260 - 297)
@@ -95,37 +97,46 @@ describe('computeFundaeGroups', () => {
   it('does not apply the economic module to 1–9 worker companies', () => {
     const [row] = computeFundaeGroups(
       [particular],
-      contract({ workforceBand: '6-9' }),
+      contract({ workforceBand: '6-9', fundaeModality: 'teleformacion' }),
     )
     expect(row.moduleUnlimited).toBe(true)
     expect(row.bonus).toBe(1260)
   })
 
-  it('scales bonuses pro-rata when the annual credit is smaller than the sum', () => {
+  it('applies one company modality to every group and scales credit pro-rata', () => {
     const rows = computeFundaeGroups(
       [grupoB2, particular],
-      contract({ fundaeCredit: 4000 }),
+      contract({ fundaeCredit: 4000, fundaeModality: 'teleformacion' }),
     )
-    const unscaled = 6240 + 297
-    expect(rows[0].bonus).toBeCloseTo(4000 * (6240 / unscaled))
-    expect(rows[1].bonus).toBeCloseTo(4000 * (297 / unscaled))
-    expect(rows[0].creditScaled).toBe(true)
+    const capA = 72 * 8 * 7.5 * 1.1
+    const capB = 36 * 1 * 7.5 * 1.1
+    const unscaled = Math.min(6240, capA) + Math.min(1260, capB)
+    expect(rows[0].enabled).toBe(true)
+    expect(rows[1].enabled).toBe(true)
     expect(rows[0].bonus + rows[1].bonus).toBeCloseTo(4000)
+    expect(rows[0].bonus).toBeCloseTo(4000 * (Math.min(6240, capA) / unscaled))
+    expect(rows[1].bonus).toBeCloseTo(4000 * (Math.min(1260, capB) / unscaled))
+    expect(rows[0].creditScaled).toBe(true)
   })
 
-  it('leaves unbonified groups at zero and warns above 30 presencial participants', () => {
-    const crowded: CourseConfig = {
-      ...grupoB2,
-      id: 'crowd',
-      classSize: 32,
-      fundaeModality: 'presencial-basico',
-    }
-    const skipped: CourseConfig = { ...grupoB2, id: 'off', fundaeModality: 'none' }
-    const [a, b] = computeFundaeGroups([crowded, skipped], contract())
-    expect(a.presencialCapWarning).toBe(true)
-    expect(b.enabled).toBe(false)
-    expect(b.bonus).toBe(0)
-    expect(b.companyNet).toBe(780 * 8)
+  it('turns off the bonus for the whole company when modality is none', () => {
+    const rows = computeFundaeGroups(
+      [grupoB2, particular],
+      contract({ fundaeModality: 'none' }),
+    )
+    expect(rows.every((row) => !row.enabled && row.bonus === 0)).toBe(true)
+    expect(rows[0].companyNet).toBe(6240)
+    expect(rows[1].companyNet).toBe(1260)
+  })
+
+  it('warns above 30 presencial participants using the company modality', () => {
+    const crowded: CourseConfig = { ...grupoB2, id: 'crowd', classSize: 32 }
+    const [row] = computeFundaeGroups(
+      [crowded],
+      contract({ fundaeModality: 'presencial-basico' }),
+    )
+    expect(row.presencialCapWarning).toBe(true)
+    expect(row.enabled).toBe(true)
   })
 
   it('bonifies the example contract under the 10–49 / in-hours rules', () => {

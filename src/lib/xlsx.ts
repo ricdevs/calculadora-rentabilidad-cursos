@@ -124,7 +124,7 @@ function writeIdentity(
     ? 'formación en jornada'
     : 'formación fuera de jornada'
   sheet.getCell('A3').value =
-    `${formatDate(exportedAt)}  ·  ${totals.groupCount} grupos  ·  ${totals.studentCount} alumnos  ·  ${totals.teacherHours} h profesor  ·  FUNDAE ${workforceLabel(contract.workforceBand)}  ·  ${credit}  ·  ${jornada}`
+    `${formatDate(exportedAt)}  ·  ${totals.groupCount} grupos  ·  ${totals.studentCount} alumnos  ·  ${totals.teacherHours} h profesor  ·  FUNDAE ${workforceLabel(contract.workforceBand)}  ·  ${FUNDAE_MODALITY_SHORT[contract.fundaeModality]}  ·  ${credit}  ·  ${jornada}`
   sheet.getCell('A3').font = FONT_MUTED
 }
 
@@ -295,12 +295,6 @@ const contratoColumns: Column[] = [
     kind: 'percent',
     value: (row) => row.metrics.roiPct,
     total: (totals) => totals.roiPct,
-  },
-  {
-    header: 'Modalidad FUNDAE',
-    width: 20,
-    kind: 'text',
-    value: (row) => FUNDAE_MODALITY_SHORT[row.fundaeModality],
   },
   {
     header: 'Techo módulo €',
@@ -499,6 +493,7 @@ function buildContratoSheet(
   sheet.getCell(`A${noteRow}`).value = 'Parámetros FUNDAE (formación programada)'
   sheet.getCell(`A${noteRow}`).font = FONT_SECTION
   const fundaeLines: [string, string | number][] = [
+    ['Modalidad', FUNDAE_MODALITY_SHORT[contract.fundaeModality]],
     ['Plantilla', workforceLabel(contract.workforceBand)],
     [
       'Crédito anual',

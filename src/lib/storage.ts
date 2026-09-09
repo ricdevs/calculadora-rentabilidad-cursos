@@ -80,7 +80,21 @@ function isContract(value: unknown): value is Contract {
   return typeof row.name === 'string' && typeof row.company === 'string'
 }
 
-function pickContract(row: Contract): Contract {
+function migrateModality(
+  contract: Contract,
+  courses: unknown,
+): FundaeModality {
+  if (isFundaeModality(contract.fundaeModality)) return contract.fundaeModality
+  if (!Array.isArray(courses)) return 'none'
+  for (const item of courses) {
+    if (!item || typeof item !== 'object') continue
+    const modality = (item as { fundaeModality?: unknown }).fundaeModality
+    if (isFundaeModality(modality) && modality !== 'none') return modality
+  }
+  return 'none'
+}
+
+function pickContract(row: Contract, courses: unknown): Contract {
   const credit = row.fundaeCredit
   return {
     name: row.name,
@@ -88,6 +102,7 @@ function pickContract(row: Contract): Contract {
     workforceBand: isWorkforceBand(row.workforceBand)
       ? row.workforceBand
       : exampleContract.workforceBand,
+    fundaeModality: migrateModality(row, courses),
     fundaeCredit:
       typeof credit === 'number' && Number.isFinite(credit) && credit >= 0
         ? credit
@@ -109,9 +124,6 @@ function pickCourse(row: CourseConfig): CourseConfig {
     classSize: row.classSize,
     teacherHourlyCost: row.teacherHourlyCost,
     customerAcquisitionCost: row.customerAcquisitionCost,
-    fundaeModality: isFundaeModality(row.fundaeModality)
-      ? row.fundaeModality
-      : 'none',
   }
 }
 
@@ -149,7 +161,7 @@ export function loadState(): {
     if (parsed.version === STORAGE_VERSION) {
       return {
         contract: isContract(parsed.contract)
-          ? pickContract(parsed.contract)
+          ? pickContract(parsed.contract, parsed.courses)
           : { ...exampleContract },
         courses: sanitizeCourses(parsed.courses),
         charts,

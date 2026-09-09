@@ -50,7 +50,7 @@ export const FUNDAE_MODALITY_SHORT: Record<FundaeModality, string> = {
   teleformacion: 'Teleformación',
 }
 
-function isPresencial(modality: FundaeModality): boolean {
+export function isPresencial(modality: FundaeModality): boolean {
   return modality === 'presencial-basico' || modality === 'presencial-superior'
 }
 
@@ -106,7 +106,7 @@ function groupBonusBeforeCredit(
   const invoice = Math.max(0, config.pricePerStudent) * Math.max(0, config.classSize)
   const hours = Math.max(0, config.hoursPerStudent)
   const size = Math.max(0, config.classSize)
-  const modality = config.fundaeModality
+  const modality = contract.fundaeModality
   const enabled = modality !== 'none'
 
   if (!enabled) {
@@ -172,10 +172,6 @@ export function computeFundaeGroups(
       creditScaled: scale < 1,
     }
   })
-}
-
-export function defaultFundaeModality(): FundaeModality {
-  return 'none'
 }
 
 export function workforceLabel(band: WorkforceBand): string {
