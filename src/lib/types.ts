@@ -32,6 +32,13 @@ export type CourseMetrics = {
   revenueToTeacherCost: number | null
   coversTeacherAndCac: boolean
   classSizeWarning: boolean
+  teacherShareOfRevenue: number
+  cacShareOfRevenue: number
+  costPerStudentHour: number
+  contributionPerStudentHour: number
+  breakEvenPrice: number | null
+  maxTeacherHourlyCost: number | null
+  maxCacPerStudent: number | null
 }
 
 export type CourseRow = CourseConfig & { metrics: CourseMetrics }
@@ -44,7 +51,26 @@ export type PortfolioTotals = {
   profit: number
   marginPct: number
   roiPct: number
+  teacherShareOfRevenue: number
+  cacShareOfRevenue: number
   courseCount: number
+}
+
+export type SweepPoint = {
+  x: number
+  ingresos: number
+  costeProfesor: number
+  cac: number
+  costeTotal: number
+  beneficio: number
+  margenPct: number
+  roiPct: number
+}
+
+export type BreakEvenPoint = {
+  x: number
+  y: number
+  axis: string
 }
 
 export const CHART_IDS = [

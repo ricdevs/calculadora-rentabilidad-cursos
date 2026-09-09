@@ -1,9 +1,12 @@
+import { fieldSpec, type SweepAxis } from '@/lib/fields'
 import {
   PUBLIC_GROUP_SIZE_CAP,
+  type BreakEvenPoint,
   type CourseConfig,
   type CourseMetrics,
   type CourseRow,
   type PortfolioTotals,
+  type SweepPoint,
 } from '@/lib/types'
 
 function safeDivide(numerator: number, denominator: number): number | null {
@@ -62,6 +65,17 @@ export function computeMetrics(config: CourseConfig): CourseMetrics {
     coversTeacherAndCac:
       breakEvenStudents !== null && size + 1e-9 >= breakEvenStudents,
     classSizeWarning: size > PUBLIC_GROUP_SIZE_CAP,
+    teacherShareOfRevenue: safeDivide(teacherCostPerGroup, revenuePerGroup) ?? 0,
+    cacShareOfRevenue: safeDivide(cacPerGroup, revenuePerGroup) ?? 0,
+    costPerStudentHour: safeDivide(totalCostPerStudent, hours) ?? 0,
+    contributionPerStudentHour: safeDivide(profitPerStudent, hours) ?? 0,
+    breakEvenPrice: size > 0 ? teacherCostPerStudent + cac : null,
+    maxTeacherHourlyCost: safeDivide(
+      revenuePerGroup - cacPerGroup,
+      teacherHours,
+    ),
+    maxCacPerStudent:
+      size > 0 ? price - teacherCostPerStudent : null,
   }
 }
 
@@ -88,6 +102,84 @@ export function computePortfolio(configs: CourseConfig[]): PortfolioTotals {
     profit,
     marginPct: safeDivide(profit, revenue) ?? 0,
     roiPct: safeDivide(profit, totalCost) ?? 0,
+    teacherShareOfRevenue: safeDivide(teacherCost, revenue) ?? 0,
+    cacShareOfRevenue: safeDivide(cac, revenue) ?? 0,
     courseCount: configs.length,
+  }
+}
+
+export function sweepCourse(
+  config: CourseConfig,
+  axis: SweepAxis,
+): SweepPoint[] {
+  const spec = fieldSpec(axis)
+  const points: SweepPoint[] = []
+  for (let x = spec.min; x <= spec.max + spec.sweepStep / 2; x += spec.sweepStep) {
+    const value = Number(x.toFixed(4))
+    const metrics = computeMetrics({ ...config, [axis]: value })
+    points.push({
+      x: value,
+      ingresos: metrics.revenuePerGroup,
+      costeProfesor: metrics.teacherCostPerGroup,
+      cac: metrics.cacPerGroup,
+      costeTotal: metrics.totalCostPerGroup,
+      beneficio: metrics.profitPerGroup,
+      margenPct: metrics.marginPct,
+      roiPct: metrics.roiPct,
+    })
+  }
+  return points
+}
+
+export function breakEvenOnAxis(
+  config: CourseConfig,
+  axis: SweepAxis,
+): BreakEvenPoint | null {
+  const metrics = computeMetrics(config)
+  switch (axis) {
+    case 'classSize': {
+      if (metrics.breakEvenStudents === null) return null
+      return {
+        x: metrics.breakEvenStudents,
+        y: config.pricePerStudent * metrics.breakEvenStudents,
+        axis,
+      }
+    }
+    case 'pricePerStudent': {
+      if (metrics.breakEvenPrice === null) return null
+      return {
+        x: metrics.breakEvenPrice,
+        y: metrics.breakEvenPrice * config.classSize,
+        axis,
+      }
+    }
+    case 'teacherHourlyCost': {
+      if (metrics.maxTeacherHourlyCost === null) return null
+      return {
+        x: metrics.maxTeacherHourlyCost,
+        y: metrics.revenuePerGroup,
+        axis,
+      }
+    }
+    case 'customerAcquisitionCost': {
+      if (metrics.maxCacPerStudent === null) return null
+      return {
+        x: metrics.maxCacPerStudent,
+        y: metrics.revenuePerGroup,
+        axis,
+      }
+    }
+    case 'hoursPerStudent': {
+      if (config.teacherHourlyCost <= 0) return null
+      const contribution = config.pricePerStudent - config.customerAcquisitionCost
+      if (contribution <= 0) return null
+      const hours =
+        (contribution * config.classSize) / config.teacherHourlyCost
+      return {
+        x: hours,
+        y: config.pricePerStudent * config.classSize,
+        axis,
+      }
+    }
   }
 }

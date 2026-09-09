@@ -1,4 +1,9 @@
-import { computeMetrics, computePortfolio } from '@/lib/calculations'
+import {
+  breakEvenOnAxis,
+  computeMetrics,
+  computePortfolio,
+  sweepCourse,
+} from '@/lib/calculations'
 import type { CourseConfig } from '@/lib/types'
 import { describe, expect, it } from 'vitest'
 
@@ -33,6 +38,12 @@ describe('computeMetrics', () => {
     expect(m.coversTeacherAndCac).toBe(true)
     expect(m.revenuePerStudentHour).toBeCloseTo(10.833, 3)
     expect(m.classSizeWarning).toBe(false)
+    expect(m.teacherShareOfRevenue).toBeCloseTo(1584 / 6240)
+    expect(m.cacShareOfRevenue).toBeCloseTo(560 / 6240)
+    expect(m.breakEvenPrice).toBe(268)
+    expect(m.maxTeacherHourlyCost).toBeCloseTo(5680 / 72)
+    expect(m.maxCacPerStudent).toBe(582)
+    expect(m.contributionPerStudentHour).toBeCloseTo(512 / 72)
   })
 
   it('flags groups above the public size cap', () => {
@@ -77,5 +88,28 @@ describe('computePortfolio', () => {
     expect(totals.teacherCost).toBe(1584 + 1008)
     expect(totals.cac).toBe(560 + 50)
     expect(totals.profit).toBe(totals.revenue - totals.totalCost)
+  })
+})
+
+describe('breakEvenOnAxis and sweepCourse', () => {
+  it('finds the class-size intersection of revenue and total cost', () => {
+    const point = breakEvenOnAxis(acceptance, 'classSize')
+    expect(point).not.toBeNull()
+    expect(point?.x).toBeCloseTo(1584 / 710)
+    expect(point?.y).toBeCloseTo((1584 / 710) * 780)
+  })
+
+  it('finds the break-even price at the current group size', () => {
+    const point = breakEvenOnAxis(acceptance, 'pricePerStudent')
+    expect(point?.x).toBe(268)
+    expect(point?.y).toBe(268 * 8)
+  })
+
+  it('sweeps class size with matching metrics at n = 8', () => {
+    const points = sweepCourse(acceptance, 'classSize')
+    const atEight = points.find((point) => point.x === 8)
+    expect(atEight?.ingresos).toBe(6240)
+    expect(atEight?.costeTotal).toBe(2144)
+    expect(atEight?.beneficio).toBe(4096)
   })
 })

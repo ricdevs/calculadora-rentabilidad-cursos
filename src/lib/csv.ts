@@ -21,6 +21,11 @@ const headers = [
   'ROI',
   'Punto equilibrio (alumnos)',
   'Precio/hora-alumno',
+  '% profesor / ingresos',
+  '% CAC / ingresos',
+  'Precio mínimo',
+  'Techo profesor €/h',
+  'Contribución / hora-alumno',
 ]
 
 function cell(value: string | number | null): string {
@@ -58,6 +63,11 @@ export function coursesToCsv(courses: CourseConfig[]): string {
         cell(m.roiPct),
         cell(m.breakEvenStudents),
         cell(m.revenuePerStudentHour),
+        cell(m.teacherShareOfRevenue),
+        cell(m.cacShareOfRevenue),
+        cell(m.breakEvenPrice),
+        cell(m.maxTeacherHourlyCost),
+        cell(m.contributionPerStudentHour),
       ].join(';'),
     )
   }

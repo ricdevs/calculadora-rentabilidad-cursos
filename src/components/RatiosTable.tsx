@@ -87,6 +87,19 @@ export function RatiosTable({
                 € / h profesor
               </TableHead>
               <TableHead>Ingresos / prof.</TableHead>
+              <TableHead title="Coste profesor ÷ ingresos">
+                % profesor
+              </TableHead>
+              <TableHead title="CAC ÷ ingresos">% CAC</TableHead>
+              <TableHead title="Precio mínimo por alumno para cubrir profesor + CAC">
+                Precio mín.
+              </TableHead>
+              <TableHead title="€/h máximo del profesor para no perder">
+                Techo prof. €/h
+              </TableHead>
+              <TableHead title="Beneficio por alumno ÷ horas">
+                Contrib. / h-alum.
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -165,6 +178,25 @@ export function RatiosTable({
                   <TableCell className="tabular-nums">
                     {formatRatio(row.metrics.revenueToTeacherCost)}
                   </TableCell>
+                  <TableCell className="tabular-nums">
+                    {formatPct(row.metrics.teacherShareOfRevenue)}
+                  </TableCell>
+                  <TableCell className="tabular-nums">
+                    {formatPct(row.metrics.cacShareOfRevenue)}
+                  </TableCell>
+                  <TableCell className="tabular-nums">
+                    {row.metrics.breakEvenPrice === null
+                      ? '—'
+                      : formatEuro(row.metrics.breakEvenPrice)}
+                  </TableCell>
+                  <TableCell className="tabular-nums">
+                    {row.metrics.maxTeacherHourlyCost === null
+                      ? '—'
+                      : formatEuro(row.metrics.maxTeacherHourlyCost, true)}
+                  </TableCell>
+                  <TableCell className="tabular-nums">
+                    {formatEuro(row.metrics.contributionPerStudentHour, true)}
+                  </TableCell>
                 </TableRow>
               )
             })}
@@ -199,6 +231,15 @@ export function RatiosTable({
                 {formatPct(totals.roiPct)}
               </TableCell>
               <TableCell />
+              <TableCell />
+              <TableCell />
+              <TableCell />
+              <TableCell className="tabular-nums">
+                {formatPct(totals.teacherShareOfRevenue)}
+              </TableCell>
+              <TableCell className="tabular-nums">
+                {formatPct(totals.cacShareOfRevenue)}
+              </TableCell>
               <TableCell />
               <TableCell />
               <TableCell />

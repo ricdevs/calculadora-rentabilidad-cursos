@@ -9,6 +9,7 @@ Los datos se quedan en el navegador. No hay login ni servidor.
 1. **Configuraciones de curso** — horas por alumno, tamaño de clase, duración, coste del profesor (€/h), CAC y precio.
 2. **Rentabilidades y ratios** — sesiones, coste profesor/alumno, beneficio, margen, ROI, €/hora-alumno y alumnos mínimos para cubrir profesor + CAC.
 3. **Gráficos conmutables** — costes vs ingresos, beneficio, composición de costes, margen y equilibrio vs tamaño actual.
+4. **Análisis de configuración** — gráfico de líneas con el cruce ingresos / coste total (punto de equilibrio), margen y ROI, y deslizadores en tiempo real.
 
 Los escenarios de ejemplo (grupo anual, particular, intensivo de verano, empresa 24 semanas) son **ilustrativos**. Cámbialos por tarifas reales antes de cotizar.
 

@@ -31,6 +31,15 @@ export function Formulas() {
             Punto de equilibrio (alumnos) = coste profesor del grupo ÷ (precio −
             CAC)
           </li>
+          <li>
+            Precio mínimo / alumno = coste profesor / alumno + CAC
+          </li>
+          <li>
+            Techo €/h profesor = (ingresos − CAC grupo) ÷ horas del curso
+          </li>
+          <li>
+            % profesor o CAC = ese coste ÷ ingresos del grupo
+          </li>
         </ul>
         <p>
           Esto es <strong>margen de contribución</strong>: no incluye alquiler,

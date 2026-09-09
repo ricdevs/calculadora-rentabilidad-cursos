@@ -20,14 +20,36 @@ const ChartsPanel = lazy(() =>
   import('@/components/ChartsPanel').then((mod) => ({ default: mod.ChartsPanel })),
 )
 
+const AnalysisChart = lazy(() =>
+  import('@/components/AnalysisChart').then((mod) => ({
+    default: mod.AnalysisChart,
+  })),
+)
+
+function ChartFallback() {
+  return (
+    <div className="text-muted-foreground rounded-xl bg-card p-5 text-sm ring-1 ring-foreground/10">
+      Cargando gráficos…
+    </div>
+  )
+}
+
 export default function App() {
   const initial = useMemo(() => loadState(), [])
   const [courses, setCourses] = useState<CourseConfig[]>(initial.courses)
   const [charts, setCharts] = useState<ChartVisibility>(initial.charts)
+  const [selectedId, setSelectedId] = useState<string | null>(
+    initial.courses[0]?.id ?? null,
+  )
 
   useEffect(() => {
     saveState(courses, charts)
   }, [courses, charts])
+
+  const activeId =
+    selectedId && courses.some((course) => course.id === selectedId)
+      ? selectedId
+      : (courses[0]?.id ?? null)
 
   const rows = useMemo(() => courses.map(withMetrics), [courses])
   const totals = useMemo(() => computePortfolio(courses), [courses])
@@ -75,6 +97,8 @@ export default function App() {
 
         <ConfigTable
           courses={courses}
+          selectedId={activeId}
+          onSelect={setSelectedId}
           onChange={patchCourse}
           onAdd={() =>
             setCourses((current) => [...current, createBlankCourse(current)])
@@ -90,15 +114,18 @@ export default function App() {
           }
         />
 
+        <Suspense fallback={<ChartFallback />}>
+          <AnalysisChart
+            courses={courses}
+            selectedId={activeId}
+            onSelect={setSelectedId}
+            onChange={patchCourse}
+          />
+        </Suspense>
+
         <RatiosTable rows={rows} totals={totals} />
 
-        <Suspense
-          fallback={
-            <div className="text-muted-foreground rounded-xl bg-card p-5 text-sm ring-1 ring-foreground/10">
-              Cargando gráficos…
-            </div>
-          }
-        >
+        <Suspense fallback={<ChartFallback />}>
           <ChartsPanel
             rows={rows}
             visibility={charts}
