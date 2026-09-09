@@ -61,4 +61,4 @@ El profesor imparte el grupo durante todas las horas del alumno. El tamaño de c
 
 - Comercial: este acuerdo de 4 grupos, ¿cubre profesor en cada uno y en conjunto?
 - Dirección: comparar componentes (particular, intensivo, in-company) dentro del mismo contrato.
-- Exportar CSV (incluye una fila **TOTAL CONTRATO**) para llevarlo a una hoja de cálculo.
+- Exportar Excel (`.xlsx`, incluye una fila **TOTAL CONTRATO**) para abrir el acuerdo en una hoja de cálculo.

@@ -6,7 +6,6 @@ import { SectionCollapsible } from '@/components/SectionCollapsible'
 import { SummaryCards } from '@/components/SummaryCards'
 import { Button } from '@/components/ui/button'
 import { computePortfolio, withMetrics } from '@/lib/calculations'
-import { downloadCsv } from '@/lib/csv'
 import {
   createBlankCourse,
   duplicateCourse,
@@ -52,6 +51,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(
     initial.courses[0]?.id ?? null,
   )
+  const [exporting, setExporting] = useState(false)
 
   useEffect(() => {
     saveState(contract, courses, charts)
@@ -86,6 +86,17 @@ export default function App() {
     setCourses(exampleCourses.map((course) => ({ ...course })))
   }
 
+  async function exportWorkbook() {
+    if (courses.length === 0 || exporting) return
+    setExporting(true)
+    try {
+      const { downloadXlsx } = await import('@/lib/xlsx')
+      await downloadXlsx(contract, courses)
+    } finally {
+      setExporting(false)
+    }
+  }
+
   return (
     <div className="min-h-svh">
       <Header />
@@ -100,11 +111,11 @@ export default function App() {
             <Button
               variant="outline"
               className="bg-white"
-              onClick={() => downloadCsv(contract, courses)}
-              disabled={courses.length === 0}
+              onClick={() => void exportWorkbook()}
+              disabled={courses.length === 0 || exporting}
             >
               <Download data-icon="inline-start" />
-              Exportar CSV
+              {exporting ? 'Exportando…' : 'Exportar Excel'}
             </Button>
             <Button
               variant="outline"
