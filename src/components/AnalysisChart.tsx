@@ -22,11 +22,11 @@ import {
 } from 'recharts'
 
 const SERIES = [
-  { key: 'ingresos', label: 'Ingresos', color: '#C9A227' },
-  { key: 'costeTotal', label: 'Coste total', color: '#8C4A32' },
-  { key: 'costeProfesor', label: 'Coste profesor', color: '#0C1F3A' },
-  { key: 'cac', label: 'CAC grupo', color: '#6B3F69' },
-  { key: 'beneficio', label: 'Beneficio', color: '#2F6F5E' },
+  { key: 'ingresos', label: 'Ingresos', color: '#9a7d4a' },
+  { key: 'costeTotal', label: 'Coste total', color: '#8a5344' },
+  { key: 'costeProfesor', label: 'Coste profesor', color: '#1c2836' },
+  { key: 'cac', label: 'CAC grupo', color: '#6b3f69' },
+  { key: 'beneficio', label: 'Beneficio', color: '#3d6b5c' },
 ] as const
 
 type EuroSeriesKey = (typeof SERIES)[number]['key']
@@ -88,7 +88,7 @@ export function AnalysisChart({
 
   if (!selected) {
     return (
-      <section className="rounded-xl bg-card p-5 text-sm text-muted-foreground ring-1 ring-foreground/10">
+      <section className="rounded-lg border border-border bg-card p-4 text-[13px] text-muted-foreground">
         Añade un grupo para analizar la configuración.
       </section>
     )
@@ -100,7 +100,7 @@ export function AnalysisChart({
     intersection.x <= spec.max
 
   return (
-    <section className="rounded-xl bg-card ring-1 ring-foreground/10">
+    <section className="rounded-lg border border-border bg-card">
       <div className="px-4 py-4 sm:px-5">
         <div className="flex flex-wrap gap-2">
           {courses.map((course) => (
@@ -175,7 +175,7 @@ export function AnalysisChart({
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={points} margin={{ top: 8, right: 12, left: 4, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e4d9c8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ddd6cb" />
                   <XAxis
                     dataKey="x"
                     type="number"
@@ -205,7 +205,7 @@ export function AnalysisChart({
                   )}
                   <ReferenceLine
                     x={currentX}
-                    stroke="#C9A227"
+                    stroke="#9a7d4a"
                     strokeDasharray="4 4"
                     label={{ value: 'Actual', fill: '#5c6573', fontSize: 11, position: 'insideTopRight' }}
                   />
@@ -237,7 +237,7 @@ export function AnalysisChart({
             <div className="h-52">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={points} margin={{ top: 8, right: 12, left: 4, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e4d9c8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ddd6cb" />
                   <XAxis
                     dataKey="x"
                     type="number"
@@ -256,7 +256,7 @@ export function AnalysisChart({
                   <Line type="monotone" dataKey="roiPct" name="ROI" stroke="#2F6F5E" dot={false} strokeWidth={2} />
                   <ReferenceLine
                     x={currentX}
-                    stroke="#C9A227"
+                    stroke="#9a7d4a"
                     strokeDasharray="4 4"
                   />
                 </LineChart>

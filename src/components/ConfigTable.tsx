@@ -28,9 +28,13 @@ import {
 import { Copy, Plus, Trash2 } from 'lucide-react'
 
 const selectClassName = cn(
-  'h-8 w-full min-w-0 rounded-lg border border-input bg-white px-2.5 py-1 text-sm outline-none',
-  'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50',
+  'h-7 w-full max-w-[13.5rem] min-w-0 rounded-md border border-input bg-card px-2 py-0.5 text-sm outline-none',
+  'focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40',
 )
+
+const fieldClassName = 'flex w-[13.5rem] max-w-full flex-col gap-0.5'
+const wideFieldClassName = 'flex w-[16.5rem] max-w-full flex-col gap-0.5'
+const labelClassName = 'text-muted-foreground text-[10px] tracking-[0.08em] uppercase'
 
 type Props = {
   contract: Contract
@@ -52,12 +56,10 @@ function FieldGrid({
   onChange: Props['onChange']
 }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <div className="grid grid-cols-2 gap-x-3 gap-y-2">
       {CONFIG_FIELDS.map((field) => (
-        <label key={field.key} className="flex flex-col gap-1">
-          <span className="text-muted-foreground text-[11px] leading-tight">
-            {field.label}
-          </span>
+        <label key={field.key} className="flex max-w-[8.5rem] flex-col gap-0.5">
+          <span className={labelClassName}>{field.label}</span>
           <NumberField
             min={0}
             step={field.step}
@@ -66,7 +68,6 @@ function FieldGrid({
             invalid={
               field.key === 'classSize' && group.classSize > PUBLIC_GROUP_SIZE_CAP
             }
-            className="w-full"
             onChange={(value) => onChange(group.id, { [field.key]: value })}
           />
         </label>
@@ -105,59 +106,48 @@ export function ConfigTable({
   onRemove,
 }: Props) {
   return (
-    <section className="rounded-xl bg-card ring-1 ring-foreground/10">
-      <div className="flex flex-wrap items-start justify-between gap-3 px-4 py-4 sm:px-5">
+    <section className="rounded-lg border border-border bg-card">
+      <div className="flex flex-wrap items-start justify-between gap-3 px-4 py-3">
         <div>
-          <h2 className="font-heading text-lg font-semibold">
+          <h2 className="font-heading text-base font-semibold">
             Configuraciones de curso
           </h2>
-          <p className="text-muted-foreground mt-1 max-w-2xl text-sm">
-            Un acuerdo comercial puede incluir varios grupos de distinto tamaño
-            y horas. Cada fila es un componente de este contrato. Los grupos
-            públicos de la academia son de {PUBLIC_GROUP_SIZE_CAP} alumnos como
-            máximo. La bonificación FUNDAE es de la <strong>empresa</strong>:
-            modalidad, plantilla y crédito se aplican a todo el acuerdo. La
-            academia cobra la factura; la empresa descuenta el crédito de las
-            cotizaciones (Sistema Red).
+          <p className="text-muted-foreground mt-0.5 max-w-xl text-[13px] leading-snug">
+            Cada fila es un grupo del acuerdo. FUNDAE (modalidad, plantilla,
+            crédito) es de la empresa y se aplica a todo el contrato.
           </p>
         </div>
-        <Button onClick={onAdd} className="shrink-0">
+        <Button onClick={onAdd} size="sm" className="shrink-0">
           <Plus data-icon="inline-start" />
           Añadir grupo
         </Button>
       </div>
 
-      <div className="grid gap-3 px-4 pb-4 sm:grid-cols-2 lg:grid-cols-4 sm:px-5">
-        <label className="flex flex-col gap-1">
-          <span className="text-muted-foreground text-[11px]">
-            Nombre del acuerdo
-          </span>
+      <div className="flex flex-wrap gap-x-4 gap-y-2.5 px-4 pb-3">
+        <label className={wideFieldClassName}>
+          <span className={labelClassName}>Nombre del acuerdo</span>
           <Input
             value={contract.name}
             aria-label="Nombre del acuerdo"
-            className="bg-white"
+            className="bg-card"
             onChange={(event) =>
               onContractChange({ name: event.target.value })
             }
           />
         </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-muted-foreground text-[11px]">
-            Empresa / cliente
-          </span>
+        <label className={wideFieldClassName}>
+          <span className={labelClassName}>Empresa / cliente</span>
           <Input
             value={contract.company}
             aria-label="Empresa o cliente"
-            className="bg-white"
+            className="bg-card"
             onChange={(event) =>
               onContractChange({ company: event.target.value })
             }
           />
         </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-muted-foreground text-[11px]">
-            Plantilla (FUNDAE)
-          </span>
+        <label className={fieldClassName}>
+          <span className={labelClassName}>Plantilla</span>
           <select
             aria-label="Plantilla de la empresa"
             className={selectClassName}
@@ -175,10 +165,8 @@ export function ConfigTable({
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-muted-foreground text-[11px]">
-            Modalidad FUNDAE
-          </span>
+        <label className={fieldClassName}>
+          <span className={labelClassName}>Modalidad FUNDAE</span>
           <select
             aria-label="Modalidad FUNDAE de la empresa"
             className={selectClassName}
@@ -196,10 +184,8 @@ export function ConfigTable({
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-muted-foreground text-[11px]">
-            Crédito FUNDAE anual (€)
-          </span>
+        <label className={fieldClassName}>
+          <span className={labelClassName}>Crédito anual (€)</span>
           <Input
             type="number"
             inputMode="decimal"
@@ -207,7 +193,7 @@ export function ConfigTable({
             step={50}
             placeholder="Sin tope"
             aria-label="Crédito FUNDAE anual"
-            className="bg-white text-right tabular-nums"
+            className="bg-card text-right tabular-nums"
             value={contract.fundaeCredit ?? ''}
             onChange={(event) => {
               const next = event.target.value
@@ -222,19 +208,18 @@ export function ConfigTable({
             }}
           />
         </label>
-        <label className="flex items-center gap-3 sm:col-span-2 lg:col-span-4">
+        <label className="flex min-h-7 items-end gap-2 pb-0.5">
           <Switch
+            size="sm"
             checked={contract.trainingInWorkHours}
             onCheckedChange={(checked) =>
               onContractChange({ trainingInWorkHours: checked })
             }
           />
-          <span className="text-sm">
-            Formación en jornada laboral
-            <span className="text-muted-foreground mt-0.5 block text-xs">
-              El salario de los alumnos cuenta como cofinanciación privada. Si
-              la formación es fuera de jornada, el techo de bonificación baja
-              al porcentaje que la ley deja a cargo de la empresa.
+          <span className="text-[13px] leading-tight">
+            Formación en jornada
+            <span className="text-muted-foreground mt-0.5 block text-[11px]">
+              El salario cubre la cofinanciación privada.
             </span>
           </span>
         </label>
@@ -263,7 +248,7 @@ export function ConfigTable({
                   <Input
                     value={group.name}
                     aria-label="Nombre del grupo"
-                    className="bg-white"
+                    className="bg-card"
                     onChange={(event) =>
                       onChange(group.id, { name: event.target.value })
                     }
@@ -327,7 +312,7 @@ export function ConfigTable({
                         <Input
                           value={group.name}
                           aria-label="Nombre del grupo"
-                          className="min-w-[10rem] bg-white"
+                          className="min-w-[9rem] bg-card"
                           onChange={(event) =>
                             onChange(group.id, { name: event.target.value })
                           }
@@ -346,7 +331,6 @@ export function ConfigTable({
                               field.key === 'classSize' &&
                               group.classSize > PUBLIC_GROUP_SIZE_CAP
                             }
-                            className="w-full"
                             onChange={(value) =>
                               onChange(group.id, { [field.key]: value })
                             }

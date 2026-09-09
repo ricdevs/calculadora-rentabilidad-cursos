@@ -70,7 +70,7 @@ function ChartTip({ active, payload, label, kind = 'euro' }: TipProps) {
   )
 }
 
-const axisTick = { fill: '#5c6573', fontSize: 11 }
+const axisTick = { fill: '#6a6560', fontSize: 11 }
 
 export function ChartsPanel({
   rows,
@@ -96,7 +96,7 @@ export function ChartsPanel({
   const active = chartMeta.filter((chart) => visibility[chart.id])
 
   return (
-    <section className="rounded-xl bg-card ring-1 ring-foreground/10">
+    <section className="rounded-lg border border-border bg-card">
       <div className="px-4 py-4 sm:px-5">
         <div className="flex flex-wrap gap-x-5 gap-y-3">
           {chartMeta.map((chart) => (
@@ -134,14 +134,14 @@ export function ChartsPanel({
           {visibility.costsRevenue ? (
             <ChartCard title="Costes e ingresos">
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e4d9c8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#ddd6cb" />
                 <XAxis dataKey="name" tick={axisTick} interval={0} />
                 <YAxis tick={axisTick} tickFormatter={(v) => formatEuro(v)} width={72} />
                 <Tooltip content={<ChartTip />} />
                 <Legend />
-                <Bar dataKey="Profesor" stackId="cost" fill="#0C1F3A" radius={[0, 0, 0, 0]} />
-                <Bar dataKey="CAC" stackId="cost" fill="#8C4A32" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Ingresos" fill="#C9A227" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Profesor" stackId="cost" fill="#1c2836" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="CAC" stackId="cost" fill="#8a5344" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Ingresos" fill="#9a7d4a" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ChartCard>
           ) : null}
@@ -149,7 +149,7 @@ export function ChartsPanel({
           {visibility.payoff ? (
             <ChartCard title="Beneficio por grupo">
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e4d9c8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#ddd6cb" />
                 <XAxis dataKey="name" tick={axisTick} interval={0} />
                 <YAxis tick={axisTick} tickFormatter={(v) => formatEuro(v)} width={72} />
                 <Tooltip content={<ChartTip />} />
@@ -157,7 +157,7 @@ export function ChartsPanel({
                   {data.map((entry) => (
                     <Cell
                       key={entry.name}
-                      fill={entry.Beneficio >= 0 ? '#2F6F5E' : '#b42318'}
+                      fill={entry.Beneficio >= 0 ? '#3d6b5c' : '#9f3a32'}
                     />
                   ))}
                 </Bar>
@@ -168,13 +168,13 @@ export function ChartsPanel({
           {visibility.costMix ? (
             <ChartCard title="Profesor vs captación">
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e4d9c8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#ddd6cb" />
                 <XAxis dataKey="name" tick={axisTick} interval={0} />
                 <YAxis tick={axisTick} tickFormatter={(v) => formatEuro(v)} width={72} />
                 <Tooltip content={<ChartTip />} />
                 <Legend />
-                <Bar dataKey="Profesor" fill="#0C1F3A" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="CAC" fill="#8C4A32" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Profesor" fill="#1c2836" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="CAC" fill="#8a5344" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ChartCard>
           ) : null}
@@ -182,7 +182,7 @@ export function ChartsPanel({
           {visibility.margin ? (
             <ChartCard title="Margen de contribución">
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e4d9c8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#ddd6cb" />
                 <XAxis dataKey="name" tick={axisTick} interval={0} />
                 <YAxis
                   tick={axisTick}
@@ -190,7 +190,7 @@ export function ChartsPanel({
                   width={56}
                 />
                 <Tooltip content={<ChartTip kind="pct" />} />
-                <Bar dataKey="Margen" fill="#4A6FA5" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Margen" fill="#4d6488" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ChartCard>
           ) : null}
@@ -198,13 +198,13 @@ export function ChartsPanel({
           {visibility.breakEven ? (
             <ChartCard title="Alumnos actuales vs equilibrio">
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e4d9c8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#ddd6cb" />
                 <XAxis dataKey="name" tick={axisTick} interval={0} />
                 <YAxis tick={axisTick} width={40} />
                 <Tooltip content={<ChartTip kind="students" />} />
                 <Legend />
-                <Bar dataKey="Equilibrio" fill="#C9A227" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Tamaño" fill="#0C1F3A" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Equilibrio" fill="#9a7d4a" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Tamaño" fill="#1c2836" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ChartCard>
           ) : null}

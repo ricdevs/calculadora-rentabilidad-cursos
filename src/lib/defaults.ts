@@ -1,12 +1,12 @@
 import type { ChartVisibility, Contract, CourseConfig, SectionFolds } from '@/lib/types'
 
 export const COURSE_COLORS = [
-  '#0C1F3A',
-  '#C9A227',
-  '#2F6F5E',
-  '#8C4A32',
-  '#4A6FA5',
-  '#6B3F69',
+  '#1c2836',
+  '#9a7d4a',
+  '#3d6b5c',
+  '#8a5344',
+  '#4d6488',
+  '#6b3f69',
 ] as const
 
 export const defaultChartVisibility: ChartVisibility = {

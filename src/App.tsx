@@ -36,7 +36,7 @@ const AnalysisChart = lazy(() =>
 
 function ChartFallback() {
   return (
-    <div className="text-muted-foreground rounded-xl bg-card p-5 text-sm ring-1 ring-foreground/10">
+    <div className="text-muted-foreground rounded-lg border border-border bg-card p-4 text-[13px]">
       Cargando gráficos…
     </div>
   )
@@ -106,8 +106,8 @@ export default function App() {
   return (
     <div className="min-h-svh">
       <Header />
-      <main className="mx-auto flex max-w-[1440px] flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 sm:flex-row sm:items-center sm:justify-between">
+      <main className="mx-auto flex max-w-[1120px] flex-col gap-4 px-4 py-5 sm:px-6">
+        <div className="flex flex-col gap-2.5 rounded-lg border border-border border-l-gold bg-card px-3.5 py-2.5 text-[13px] sm:flex-row sm:items-center sm:justify-between">
           <p>
             El ejemplo de partida es un <strong>acuerdo ilustrativo</strong> con
             varios grupos y un cálculo FUNDAE (formación programada). Sustituye
@@ -117,18 +117,14 @@ export default function App() {
           <div className="flex shrink-0 flex-wrap gap-2">
             <Button
               variant="outline"
-              className="bg-white"
+              size="sm"
               onClick={() => void exportWorkbook()}
               disabled={courses.length === 0 || exporting}
             >
               <Download data-icon="inline-start" />
               {exporting ? 'Exportando…' : 'Exportar Excel'}
             </Button>
-            <Button
-              variant="outline"
-              className="bg-white"
-              onClick={restoreExamples}
-            >
+            <Button variant="outline" size="sm" onClick={restoreExamples}>
               <RotateCcw data-icon="inline-start" />
               Restaurar ejemplo
             </Button>

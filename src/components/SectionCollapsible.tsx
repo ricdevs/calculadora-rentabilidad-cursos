@@ -29,9 +29,9 @@ export function SectionCollapsible({
         onClick={() => onOpenChange(!open)}
       >
         <div className="min-w-0">
-          <h2 className="font-heading text-lg font-semibold">{title}</h2>
+          <h2 className="font-heading text-base font-semibold">{title}</h2>
           {description ? (
-            <p className="text-muted-foreground mt-1 max-w-3xl text-sm">
+            <p className="text-muted-foreground mt-0.5 max-w-2xl text-[13px] leading-snug">
               {description}
             </p>
           ) : null}
@@ -39,7 +39,7 @@ export function SectionCollapsible({
         <ChevronDown
           aria-hidden="true"
           className={cn(
-            'text-muted-foreground mt-1 size-5 shrink-0 transition-transform duration-200',
+            'text-muted-foreground mt-0.5 size-4 shrink-0 transition-transform duration-200',
             open && 'rotate-180',
           )}
         />

@@ -1,140 +1,124 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatEuro, formatNumber, formatPct } from '@/lib/format'
+import { cn } from '@/lib/utils'
 import type { PortfolioTotals } from '@/lib/types'
 
-const moneyCards = [
-  {
-    key: 'revenue' as const,
-    label: 'Ingresos del contrato',
-    hint: 'Precio × alumnos, suma de todos los grupos',
-  },
-  {
-    key: 'totalCost' as const,
-    label: 'Costes (profesor + CAC)',
-    hint: 'Sin alquiler, admin ni plataforma',
-  },
-  {
-    key: 'profit' as const,
-    label: 'Contribución',
-    hint: 'Ingresos − profesor − CAC',
-  },
-  {
-    key: 'marginPct' as const,
-    label: 'Margen de contribución',
-    hint: 'Sobre ingresos del acuerdo',
-  },
-]
+type Stat = {
+  label: string
+  value: string
+  hint: string
+  negative?: boolean
+}
+
+function StatCell({
+  label,
+  value,
+  hint,
+  negative,
+  compact,
+}: Stat & { compact?: boolean }) {
+  return (
+    <div className={cn('min-w-0 px-3 py-2.5', compact && 'py-2')}>
+      <p className="text-muted-foreground text-[10px] font-medium tracking-[0.16em] uppercase">
+        {label}
+      </p>
+      <p
+        className={cn(
+          'font-heading mt-0.5 font-semibold tracking-tight tabular-nums',
+          compact ? 'text-base' : 'text-lg',
+          negative ? 'text-destructive' : 'text-foreground',
+        )}
+      >
+        {value}
+      </p>
+      <p className="text-muted-foreground mt-0.5 text-[11px] leading-snug">
+        {hint}
+      </p>
+    </div>
+  )
+}
 
 export function SummaryCards({ totals }: { totals: PortfolioTotals }) {
-  const values = {
-    revenue: formatEuro(totals.revenue),
-    totalCost: formatEuro(totals.totalCost),
-    profit: formatEuro(totals.profit),
-    marginPct: formatPct(totals.marginPct),
-  }
-
-  const counts = [
+  const academy: Stat[] = [
     {
-      label: 'Grupos / módulos',
-      value: String(totals.groupCount),
-      hint: 'Componentes del acuerdo',
+      label: 'Ingresos',
+      value: formatEuro(totals.revenue),
+      hint: 'Precio × alumnos',
     },
     {
-      label: 'Alumnos',
-      value: formatNumber(totals.studentCount, 0),
-      hint: 'Suma de tamaños de clase',
+      label: 'Costes',
+      value: formatEuro(totals.totalCost),
+      hint: 'Profesor + CAC',
     },
     {
-      label: 'Horas profesor',
-      value: formatNumber(totals.teacherHours, 0),
-      hint: 'Horas lectivas del contrato',
+      label: 'Contribución',
+      value: formatEuro(totals.profit),
+      hint: 'Ingresos − costes',
+      negative: totals.profit < 0,
+    },
+    {
+      label: 'Margen',
+      value: formatPct(totals.marginPct),
+      hint: 'Sobre ingresos',
+      negative: totals.profit < 0,
     },
   ]
 
-  const fundaeCards = [
+  const fundae: Stat[] = [
     {
-      label: 'Bonificación FUNDAE',
+      label: 'Bonif. FUNDAE',
       value: formatEuro(totals.fundaeBonus),
       hint:
         totals.fundaeEnabledCount === 0
-          ? 'Ningún grupo con modalidad bonificable'
+          ? 'Contrato sin bonificar'
           : totals.fundaeCreditScaled
-            ? `Tope de crédito anual · ${totals.fundaeEnabledCount} grupos`
-            : `Techo factura / módulo / cofinanciación · ${totals.fundaeEnabledCount} grupos`,
+            ? 'Tope de crédito anual'
+            : 'Techo empresa',
     },
     {
-      label: '% cubierto empresa',
+      label: '% cubierto',
       value: formatPct(totals.fundaeCoveragePct),
-      hint: 'Bonificación ÷ factura del contrato',
+      hint: 'Bonificación ÷ factura',
     },
     {
       label: 'Neto empresa',
       value: formatEuro(totals.companyNet),
-      hint: 'Lo que paga la empresa tras el crédito SS',
+      hint: 'Tras crédito SS',
+    },
+  ]
+
+  const volume: Stat[] = [
+    {
+      label: 'Grupos',
+      value: String(totals.groupCount),
+      hint: 'Del acuerdo',
+    },
+    {
+      label: 'Alumnos',
+      value: formatNumber(totals.studentCount, 0),
+      hint: 'Suma de tamaños',
+    },
+    {
+      label: 'Horas prof.',
+      value: formatNumber(totals.teacherHours, 0),
+      hint: 'Horas lectivas',
     },
   ]
 
   return (
-    <div className="space-y-3">
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {moneyCards.map((card) => {
-          const isProfit = card.key === 'profit' || card.key === 'marginPct'
-          const negative = isProfit && totals.profit < 0
-          return (
-            <Card key={card.key} size="sm" className="shadow-none">
-              <CardHeader className="pb-0">
-                <CardTitle className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                  {card.label}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p
-                  className={`font-heading text-2xl font-semibold tabular-nums ${
-                    negative ? 'text-destructive' : 'text-foreground'
-                  }`}
-                >
-                  {values[card.key]}
-                </p>
-                <p className="text-muted-foreground mt-1 text-xs">{card.hint}</p>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </section>
-      <section className="grid gap-3 sm:grid-cols-3">
-        {fundaeCards.map((card) => (
-          <Card key={card.label} size="sm" className="shadow-none">
-            <CardHeader className="pb-0">
-              <CardTitle className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                {card.label}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="font-heading text-2xl font-semibold tabular-nums">
-                {card.value}
-              </p>
-              <p className="text-muted-foreground mt-1 text-xs">{card.hint}</p>
-            </CardContent>
-          </Card>
+    <div className="overflow-hidden rounded-lg border border-border bg-card">
+      <div className="grid grid-cols-2 divide-x divide-y divide-border sm:grid-cols-4 sm:divide-y-0">
+        {academy.map((stat) => (
+          <StatCell key={stat.label} {...stat} />
         ))}
-      </section>
-      <section className="grid gap-3 sm:grid-cols-3">
-        {counts.map((card) => (
-          <Card key={card.label} size="sm" className="shadow-none">
-            <CardHeader className="pb-0">
-              <CardTitle className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                {card.label}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="font-heading text-2xl font-semibold tabular-nums">
-                {card.value}
-              </p>
-              <p className="text-muted-foreground mt-1 text-xs">{card.hint}</p>
-            </CardContent>
-          </Card>
+      </div>
+      <div className="grid grid-cols-2 divide-x divide-y divide-border border-t border-border sm:grid-cols-3 lg:grid-cols-6 lg:divide-y-0">
+        {fundae.map((stat) => (
+          <StatCell key={stat.label} {...stat} compact />
         ))}
-      </section>
+        {volume.map((stat) => (
+          <StatCell key={stat.label} {...stat} compact />
+        ))}
+      </div>
     </div>
   )
 }

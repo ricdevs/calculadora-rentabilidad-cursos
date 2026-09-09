@@ -29,7 +29,7 @@ export function NumberField({
       aria-label={ariaLabel}
       aria-invalid={invalid || undefined}
       className={cn(
-        'h-8 w-[5.75rem] bg-white text-right font-medium tabular-nums',
+        'h-7 w-[4.75rem] bg-card text-right text-sm font-medium tabular-nums',
         className,
       )}
       value={Number.isFinite(value) ? value : ''}
