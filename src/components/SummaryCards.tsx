@@ -9,28 +9,21 @@ type Stat = {
   negative?: boolean
 }
 
-function StatCell({
-  label,
-  value,
-  hint,
-  negative,
-  compact,
-}: Stat & { compact?: boolean }) {
+function StatCell({ label, value, hint, negative }: Stat) {
   return (
-    <div className={cn('min-w-0 px-3 py-2.5', compact && 'py-2')}>
+    <div className="min-w-[7.5rem] shrink-0 px-3 py-2">
       <p className="text-muted-foreground text-[10px] font-medium tracking-[0.16em] uppercase">
         {label}
       </p>
       <p
         className={cn(
-          'font-heading mt-0.5 font-semibold tracking-tight tabular-nums',
-          compact ? 'text-base' : 'text-lg',
+          'font-heading mt-0.5 text-[1.05rem] leading-none font-semibold tracking-tight tabular-nums',
           negative ? 'text-destructive' : 'text-foreground',
         )}
       >
         {value}
       </p>
-      <p className="text-muted-foreground mt-0.5 text-[11px] leading-snug">
+      <p className="text-muted-foreground mt-1 text-[11px] leading-none">
         {hint}
       </p>
     </div>
@@ -63,7 +56,7 @@ export function SummaryCards({ totals }: { totals: PortfolioTotals }) {
     },
   ]
 
-  const fundae: Stat[] = [
+  const rest: Stat[] = [
     {
       label: 'Bonif. FUNDAE',
       value: formatEuro(totals.fundaeBonus),
@@ -84,9 +77,6 @@ export function SummaryCards({ totals }: { totals: PortfolioTotals }) {
       value: formatEuro(totals.companyNet),
       hint: 'Tras crédito SS',
     },
-  ]
-
-  const volume: Stat[] = [
     {
       label: 'Grupos',
       value: String(totals.groupCount),
@@ -106,17 +96,14 @@ export function SummaryCards({ totals }: { totals: PortfolioTotals }) {
 
   return (
     <div className="overflow-hidden rounded-lg border border-border bg-card">
-      <div className="grid grid-cols-2 divide-x divide-y divide-border sm:grid-cols-4 sm:divide-y-0">
+      <div className="flex flex-wrap divide-x divide-border">
         {academy.map((stat) => (
           <StatCell key={stat.label} {...stat} />
         ))}
       </div>
-      <div className="grid grid-cols-2 divide-x divide-y divide-border border-t border-border sm:grid-cols-3 lg:grid-cols-6 lg:divide-y-0">
-        {fundae.map((stat) => (
-          <StatCell key={stat.label} {...stat} compact />
-        ))}
-        {volume.map((stat) => (
-          <StatCell key={stat.label} {...stat} compact />
+      <div className="flex flex-wrap divide-x divide-border border-t border-border">
+        {rest.map((stat) => (
+          <StatCell key={stat.label} {...stat} />
         ))}
       </div>
     </div>

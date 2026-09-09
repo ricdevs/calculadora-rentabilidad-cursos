@@ -285,11 +285,11 @@ export function ConfigTable({
             ))}
           </div>
 
-          <div className="hidden lg:block">
-            <Table>
+          <div className="hidden overflow-x-auto lg:block">
+            <Table className="!w-auto">
               <TableHeader>
                 <TableRow className="bg-muted/40 hover:bg-muted/40">
-                  <TableHead className="min-w-[180px]">Grupo / módulo</TableHead>
+                  <TableHead>Grupo / módulo</TableHead>
                   {CONFIG_FIELDS.map((field) => (
                     <TableHead key={field.key}>{field.label}</TableHead>
                   ))}
@@ -312,7 +312,7 @@ export function ConfigTable({
                         <Input
                           value={group.name}
                           aria-label="Nombre del grupo"
-                          className="min-w-[9rem] bg-card"
+                          className="w-36 bg-card"
                           onChange={(event) =>
                             onChange(group.id, { name: event.target.value })
                           }
