@@ -86,6 +86,15 @@ export function RatiosTable({
               <TableHead title="Beneficio por alumno ÷ horas">
                 Contrib. / h-alum.
               </TableHead>
+              <TableHead title="Mínimo entre factura, módulo económico y cofinanciación, con tope de crédito">
+                Bonif. FUNDAE
+              </TableHead>
+              <TableHead title="Bonificación ÷ factura del grupo">
+                % cubierto
+              </TableHead>
+              <TableHead title="Factura − bonificación: lo que paga la empresa">
+                Neto empresa
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -180,6 +189,21 @@ export function RatiosTable({
                   <TableCell className="tabular-nums">
                     {formatEuro(row.metrics.contributionPerStudentHour, true)}
                   </TableCell>
+                  <TableCell className="tabular-nums">
+                    {row.fundae.enabled
+                      ? formatEuro(row.fundae.bonus)
+                      : '—'}
+                  </TableCell>
+                  <TableCell className="tabular-nums">
+                    {row.fundae.enabled
+                      ? formatPct(row.fundae.coveragePct)
+                      : '—'}
+                  </TableCell>
+                  <TableCell className="tabular-nums">
+                    {row.fundae.enabled
+                      ? formatEuro(row.fundae.companyNet)
+                      : '—'}
+                  </TableCell>
                 </TableRow>
               )
             })}
@@ -227,6 +251,15 @@ export function RatiosTable({
               <TableCell />
               <TableCell />
               <TableCell />
+              <TableCell className="tabular-nums font-semibold">
+                {formatEuro(totals.fundaeBonus)}
+              </TableCell>
+              <TableCell className="tabular-nums">
+                {formatPct(totals.fundaeCoveragePct)}
+              </TableCell>
+              <TableCell className="tabular-nums font-semibold">
+                {formatEuro(totals.companyNet)}
+              </TableCell>
             </TableRow>
           </TableFooter>
         </Table>

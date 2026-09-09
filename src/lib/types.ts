@@ -1,3 +1,27 @@
+export type WorkforceBand = '1-5' | '6-9' | '10-49' | '50-249' | '250+'
+
+export type FundaeModality =
+  | 'none'
+  | 'presencial-basico'
+  | 'presencial-superior'
+  | 'teleformacion'
+
+export type FundaeGroupResult = {
+  enabled: boolean
+  baseModule: number | null
+  effectiveModule: number | null
+  moduleUnlimited: boolean
+  moduleCap: number | null
+  cofinanceRate: number
+  cofinanceCap: number | null
+  bonusBeforeCredit: number
+  bonus: number
+  coveragePct: number
+  companyNet: number
+  creditScaled: boolean
+  presencialCapWarning: boolean
+}
+
 export type CourseConfig = {
   id: string
   name: string
@@ -7,6 +31,7 @@ export type CourseConfig = {
   classSize: number
   teacherHourlyCost: number
   customerAcquisitionCost: number
+  fundaeModality: FundaeModality
 }
 
 export type CourseMetrics = {
@@ -39,11 +64,19 @@ export type CourseMetrics = {
   maxCacPerStudent: number | null
 }
 
-export type CourseRow = CourseConfig & { metrics: CourseMetrics }
+export type CourseRow = CourseConfig & {
+  metrics: CourseMetrics
+  fundae: FundaeGroupResult
+}
 
 export type Contract = {
   name: string
   company: string
+  workforceBand: WorkforceBand
+  /** Crédito anual FUNDAE. `null` = no aplicar tope de crédito. */
+  fundaeCredit: number | null
+  /** Si la formación es en jornada, el salario cuenta como cofinanciación. */
+  trainingInWorkHours: boolean
 }
 
 export type PortfolioTotals = {
@@ -59,6 +92,11 @@ export type PortfolioTotals = {
   groupCount: number
   studentCount: number
   teacherHours: number
+  fundaeBonus: number
+  companyNet: number
+  fundaeCoveragePct: number
+  fundaeEnabledCount: number
+  fundaeCreditScaled: boolean
 }
 
 export type SweepPoint = {

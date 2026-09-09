@@ -1,3 +1,4 @@
+import { defaultFundaeModality } from '@/lib/fundae'
 import type { ChartVisibility, Contract, CourseConfig, SectionFolds } from '@/lib/types'
 
 export const COURSE_COLORS = [
@@ -28,6 +29,9 @@ export const defaultSectionFolds: SectionFolds = {
 export const exampleContract: Contract = {
   name: 'Plan FUNDAE 2026 — idiomas',
   company: 'Industria Navarra S.A.',
+  workforceBand: '10-49',
+  fundaeCredit: null,
+  trainingInWorkHours: true,
 }
 
 export const exampleCourses: CourseConfig[] = [
@@ -40,6 +44,7 @@ export const exampleCourses: CourseConfig[] = [
     classSize: 8,
     teacherHourlyCost: 22,
     customerAcquisitionCost: 70,
+    fundaeModality: 'presencial-superior',
   },
   {
     id: 'particular-c1',
@@ -50,6 +55,7 @@ export const exampleCourses: CourseConfig[] = [
     classSize: 1,
     teacherHourlyCost: 28,
     customerAcquisitionCost: 50,
+    fundaeModality: 'presencial-superior',
   },
   {
     id: 'intensivo-verano',
@@ -60,6 +66,7 @@ export const exampleCourses: CourseConfig[] = [
     classSize: 6,
     teacherHourlyCost: 22,
     customerAcquisitionCost: 40,
+    fundaeModality: 'presencial-superior',
   },
   {
     id: 'empresa-24-sem',
@@ -70,6 +77,7 @@ export const exampleCourses: CourseConfig[] = [
     classSize: 9,
     teacherHourlyCost: 30,
     customerAcquisitionCost: 120,
+    fundaeModality: 'presencial-superior',
   },
 ]
 
@@ -87,6 +95,7 @@ export function createBlankCourse(existing: CourseConfig[]): CourseConfig {
     classSize: 8,
     teacherHourlyCost: 22,
     customerAcquisitionCost: 70,
+    fundaeModality: defaultFundaeModality(),
   }
 }
 

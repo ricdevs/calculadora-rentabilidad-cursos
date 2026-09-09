@@ -51,6 +51,29 @@ export function SummaryCards({ totals }: { totals: PortfolioTotals }) {
     },
   ]
 
+  const fundaeCards = [
+    {
+      label: 'Bonificación FUNDAE',
+      value: formatEuro(totals.fundaeBonus),
+      hint:
+        totals.fundaeEnabledCount === 0
+          ? 'Ningún grupo con modalidad bonificable'
+          : totals.fundaeCreditScaled
+            ? `Tope de crédito anual · ${totals.fundaeEnabledCount} grupos`
+            : `Techo factura / módulo / cofinanciación · ${totals.fundaeEnabledCount} grupos`,
+    },
+    {
+      label: '% cubierto empresa',
+      value: formatPct(totals.fundaeCoveragePct),
+      hint: 'Bonificación ÷ factura del contrato',
+    },
+    {
+      label: 'Neto empresa',
+      value: formatEuro(totals.companyNet),
+      hint: 'Lo que paga la empresa tras el crédito SS',
+    },
+  ]
+
   return (
     <div className="space-y-3">
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -77,6 +100,23 @@ export function SummaryCards({ totals }: { totals: PortfolioTotals }) {
             </Card>
           )
         })}
+      </section>
+      <section className="grid gap-3 sm:grid-cols-3">
+        {fundaeCards.map((card) => (
+          <Card key={card.label} size="sm" className="shadow-none">
+            <CardHeader className="pb-0">
+              <CardTitle className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                {card.label}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="font-heading text-2xl font-semibold tabular-nums">
+                {card.value}
+              </p>
+              <p className="text-muted-foreground mt-1 text-xs">{card.hint}</p>
+            </CardContent>
+          </Card>
+        ))}
       </section>
       <section className="grid gap-3 sm:grid-cols-3">
         {counts.map((card) => (

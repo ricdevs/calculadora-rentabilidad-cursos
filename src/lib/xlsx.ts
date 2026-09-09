@@ -1,5 +1,10 @@
 import { Workbook, type Worksheet } from 'exceljs'
-import { computePortfolio, withMetrics } from '@/lib/calculations'
+import { computePortfolio, computeRows } from '@/lib/calculations'
+import {
+  FUNDAE_MODALITY_SHORT,
+  cofinanceRate,
+  workforceLabel,
+} from '@/lib/fundae'
 import type { Contract, CourseConfig, CourseRow, PortfolioTotals } from '@/lib/types'
 import { embedNativeCharts, type NativeChart } from '@/lib/xlsx-charts'
 
@@ -111,8 +116,15 @@ function writeIdentity(
   sheet.getCell('A1').font = FONT_TITLE
   sheet.getCell('A2').value = contract.company || '—'
   sheet.getCell('A2').font = FONT_MUTED
+  const credit =
+    contract.fundaeCredit === null
+      ? 'crédito sin tope'
+      : `crédito ${contract.fundaeCredit} €`
+  const jornada = contract.trainingInWorkHours
+    ? 'formación en jornada'
+    : 'formación fuera de jornada'
   sheet.getCell('A3').value =
-    `${formatDate(exportedAt)}  ·  ${totals.groupCount} grupos  ·  ${totals.studentCount} alumnos  ·  ${totals.teacherHours} h profesor`
+    `${formatDate(exportedAt)}  ·  ${totals.groupCount} grupos  ·  ${totals.studentCount} alumnos  ·  ${totals.teacherHours} h profesor  ·  FUNDAE ${workforceLabel(contract.workforceBand)}  ·  ${credit}  ·  ${jornada}`
   sheet.getCell('A3').font = FONT_MUTED
 }
 
@@ -284,6 +296,39 @@ const contratoColumns: Column[] = [
     value: (row) => row.metrics.roiPct,
     total: (totals) => totals.roiPct,
   },
+  {
+    header: 'Modalidad FUNDAE',
+    width: 20,
+    kind: 'text',
+    value: (row) => FUNDAE_MODALITY_SHORT[row.fundaeModality],
+  },
+  {
+    header: 'Techo módulo €',
+    width: 16,
+    kind: 'euro',
+    value: (row) => (row.fundae.enabled ? row.fundae.moduleCap : null),
+  },
+  {
+    header: 'Bonif. FUNDAE',
+    width: 16,
+    kind: 'euro',
+    value: (row) => (row.fundae.enabled ? row.fundae.bonus : null),
+    total: (totals) => totals.fundaeBonus,
+  },
+  {
+    header: '% cubierto',
+    width: 12,
+    kind: 'percent',
+    value: (row) => (row.fundae.enabled ? row.fundae.coveragePct : null),
+    total: (totals) => totals.fundaeCoveragePct,
+  },
+  {
+    header: 'Neto empresa',
+    width: 16,
+    kind: 'euro',
+    value: (row) => (row.fundae.enabled ? row.fundae.companyNet : null),
+    total: (totals) => totals.companyNet,
+  },
 ]
 
 const ratioColumns: Column[] = [
@@ -412,6 +457,27 @@ const ratioColumns: Column[] = [
     kind: 'euro',
     value: (row) => row.metrics.contributionPerStudentHour,
   },
+  {
+    header: 'Bonif. FUNDAE',
+    width: 16,
+    kind: 'euro',
+    value: (row) => (row.fundae.enabled ? row.fundae.bonus : null),
+    total: (totals) => totals.fundaeBonus,
+  },
+  {
+    header: '% cubierto',
+    width: 12,
+    kind: 'percent',
+    value: (row) => (row.fundae.enabled ? row.fundae.coveragePct : null),
+    total: (totals) => totals.fundaeCoveragePct,
+  },
+  {
+    header: 'Neto empresa',
+    width: 16,
+    kind: 'euro',
+    value: (row) => (row.fundae.enabled ? row.fundae.companyNet : null),
+    total: (totals) => totals.companyNet,
+  },
 ]
 
 function buildContratoSheet(
@@ -427,7 +493,40 @@ function buildContratoSheet(
   writeIdentity(sheet, contract, totals, exportedAt)
   sheet.getCell('A5').value = 'Cuenta de resultados por grupo'
   sheet.getCell('A5').font = FONT_SECTION
-  writeTable(sheet, 6, contratoColumns, rows, contract, totals, true)
+  const lastRow = writeTable(sheet, 6, contratoColumns, rows, contract, totals, true)
+
+  const noteRow = lastRow + 2
+  sheet.getCell(`A${noteRow}`).value = 'Parámetros FUNDAE (formación programada)'
+  sheet.getCell(`A${noteRow}`).font = FONT_SECTION
+  const fundaeLines: [string, string | number][] = [
+    ['Plantilla', workforceLabel(contract.workforceBand)],
+    [
+      'Crédito anual',
+      contract.fundaeCredit === null ? 'Sin tope' : contract.fundaeCredit,
+    ],
+    [
+      'Formación en jornada',
+      contract.trainingInWorkHours ? 'Sí (salario cubre cofinanciación)' : 'No',
+    ],
+    [
+      'Cofinanciación privada mínima',
+      cofinanceRate(contract.workforceBand),
+    ],
+    ['Bonificación del contrato', totals.fundaeBonus],
+    ['Neto empresa', totals.companyNet],
+  ]
+  fundaeLines.forEach((line, index) => {
+    const excelRow = noteRow + 1 + index
+    sheet.getRow(excelRow).getCell(1).value = line[0]
+    sheet.getRow(excelRow).getCell(1).font = FONT_MUTED
+    sheet.getRow(excelRow).getCell(2).value = line[1]
+    sheet.getRow(excelRow).getCell(2).font = FONT
+    if (typeof line[1] === 'number') {
+      const isRate = line[0].includes('Cofinanciación')
+      sheet.getRow(excelRow).getCell(2).numFmt = isRate ? FMT.percent : FMT.euro
+    }
+  })
+
   applyPage(sheet, 6)
 }
 
@@ -602,8 +701,8 @@ export function buildWorkbook(
   groups: CourseConfig[],
   exportedAt = new Date(),
 ): Workbook {
-  const rows = groups.map(withMetrics)
-  const totals = computePortfolio(groups)
+  const rows = computeRows(groups, contract)
+  const totals = computePortfolio(groups, contract)
   const workbook = new Workbook()
   workbook.creator = 'Academia Georgetown'
   workbook.created = exportedAt
@@ -620,8 +719,8 @@ export async function workbookToBuffer(
   groups: CourseConfig[],
   exportedAt = new Date(),
 ): Promise<ArrayBuffer> {
-  const rows = groups.map(withMetrics)
-  const totals = computePortfolio(groups)
+  const rows = computeRows(groups, contract)
+  const totals = computePortfolio(groups, contract)
   const workbook = new Workbook()
   workbook.creator = 'Academia Georgetown'
   workbook.created = exportedAt

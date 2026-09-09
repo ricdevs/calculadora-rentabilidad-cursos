@@ -2,6 +2,7 @@ import { NumberField } from '@/components/NumberField'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
 import {
   Table,
   TableBody,
@@ -12,11 +13,50 @@ import {
 } from '@/components/ui/table'
 import { CONFIG_FIELDS } from '@/lib/fields'
 import {
+  FUNDAE_MODALITY_OPTIONS,
+  FUNDAE_PRESENCIAL_CAP,
+  WORKFORCE_OPTIONS,
+} from '@/lib/fundae'
+import { cn } from '@/lib/utils'
+import {
   PUBLIC_GROUP_SIZE_CAP,
   type Contract,
   type CourseConfig,
+  type FundaeModality,
 } from '@/lib/types'
 import { Copy, Plus, Trash2 } from 'lucide-react'
+
+const selectClassName = cn(
+  'h-8 w-full min-w-0 rounded-lg border border-input bg-white px-2.5 py-1 text-sm outline-none',
+  'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50',
+)
+
+function FundaeSelect({
+  group,
+  onChange,
+}: {
+  group: CourseConfig
+  onChange: (id: string, patch: Partial<CourseConfig>) => void
+}) {
+  return (
+    <select
+      aria-label={`${group.name}: modalidad FUNDAE`}
+      className={selectClassName}
+      value={group.fundaeModality}
+      onChange={(event) =>
+        onChange(group.id, {
+          fundaeModality: event.target.value as FundaeModality,
+        })
+      }
+    >
+      {FUNDAE_MODALITY_OPTIONS.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  )
+}
 
 type Props = {
   contract: Contract
@@ -57,6 +97,12 @@ function FieldGrid({
           />
         </label>
       ))}
+      <label className="flex flex-col gap-1 sm:col-span-2">
+        <span className="text-muted-foreground text-[11px] leading-tight">
+          Modalidad FUNDAE
+        </span>
+        <FundaeSelect group={group} onChange={onChange} />
+      </label>
     </div>
   )
 }
@@ -83,8 +129,9 @@ export function ConfigTable({
             Un acuerdo comercial puede incluir varios grupos de distinto tamaño
             y horas. Cada fila es un componente de este contrato. Los grupos
             públicos de la academia son de {PUBLIC_GROUP_SIZE_CAP} alumnos como
-            máximo. Para explorar un grupo con deslizadores, usa el análisis de
-            configuración.
+            máximo. La bonificación FUNDAE no la cobra la academia: la empresa
+            paga la factura y descuenta el crédito de las cotizaciones (Sistema
+            Red).
           </p>
         </div>
         <Button onClick={onAdd} className="shrink-0">
@@ -93,7 +140,7 @@ export function ConfigTable({
         </Button>
       </div>
 
-      <div className="grid gap-3 px-4 pb-4 sm:grid-cols-2 sm:px-5">
+      <div className="grid gap-3 px-4 pb-4 sm:grid-cols-2 lg:grid-cols-4 sm:px-5">
         <label className="flex flex-col gap-1">
           <span className="text-muted-foreground text-[11px]">
             Nombre del acuerdo
@@ -119,6 +166,69 @@ export function ConfigTable({
               onContractChange({ company: event.target.value })
             }
           />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-muted-foreground text-[11px]">
+            Plantilla (FUNDAE)
+          </span>
+          <select
+            aria-label="Plantilla de la empresa"
+            className={selectClassName}
+            value={contract.workforceBand}
+            onChange={(event) =>
+              onContractChange({
+                workforceBand: event.target.value as Contract['workforceBand'],
+              })
+            }
+          >
+            {WORKFORCE_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-muted-foreground text-[11px]">
+            Crédito FUNDAE anual (€)
+          </span>
+          <Input
+            type="number"
+            inputMode="decimal"
+            min={0}
+            step={50}
+            placeholder="Sin tope"
+            aria-label="Crédito FUNDAE anual"
+            className="bg-white text-right tabular-nums"
+            value={contract.fundaeCredit ?? ''}
+            onChange={(event) => {
+              const next = event.target.value
+              if (next === '') {
+                onContractChange({ fundaeCredit: null })
+                return
+              }
+              const parsed = Number(next)
+              if (Number.isFinite(parsed)) {
+                onContractChange({ fundaeCredit: Math.max(0, parsed) })
+              }
+            }}
+          />
+        </label>
+        <label className="flex items-center gap-3 sm:col-span-2 lg:col-span-4">
+          <Switch
+            checked={contract.trainingInWorkHours}
+            onCheckedChange={(checked) =>
+              onContractChange({ trainingInWorkHours: checked })
+            }
+          />
+          <span className="text-sm">
+            Formación en jornada laboral
+            <span className="text-muted-foreground mt-0.5 block text-xs">
+              El salario de los alumnos cuenta como cofinanciación privada. Si
+              la formación es fuera de jornada, el techo de bonificación baja
+              al porcentaje que la ley deja a cargo de la empresa.
+            </span>
+          </span>
         </label>
       </div>
 
@@ -174,6 +284,14 @@ export function ConfigTable({
                     grupo).
                   </p>
                 ) : null}
+                {group.fundaeModality !== 'none' &&
+                group.fundaeModality !== 'teleformacion' &&
+                group.classSize > FUNDAE_PRESENCIAL_CAP ? (
+                  <p className="mt-2 text-xs text-amber-800">
+                    FUNDAE limita la presencial / aula virtual a{' '}
+                    {FUNDAE_PRESENCIAL_CAP} participantes.
+                  </p>
+                ) : null}
               </article>
             ))}
           </div>
@@ -186,6 +304,7 @@ export function ConfigTable({
                   {CONFIG_FIELDS.map((field) => (
                     <TableHead key={field.key}>{field.label}</TableHead>
                   ))}
+                  <TableHead className="min-w-[220px]">Modalidad FUNDAE</TableHead>
                   <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
@@ -238,6 +357,18 @@ export function ConfigTable({
                         </div>
                       </TableCell>
                     ))}
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        <FundaeSelect group={group} onChange={onChange} />
+                        {group.fundaeModality !== 'none' &&
+                        group.fundaeModality !== 'teleformacion' &&
+                        group.classSize > FUNDAE_PRESENCIAL_CAP ? (
+                          <Badge variant="outline" className="text-amber-800">
+                            &gt; {FUNDAE_PRESENCIAL_CAP} presencial
+                          </Badge>
+                        ) : null}
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-1">
                         <Button

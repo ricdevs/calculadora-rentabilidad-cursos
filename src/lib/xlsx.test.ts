@@ -43,6 +43,10 @@ describe('xlsx export', () => {
       'double',
     )
 
+    expect(contrato.getRow(6).getCell(15).value).toBe('Modalidad FUNDAE')
+    expect(contrato.getRow(7).getCell(15).value).toBe('Presencial superior')
+    expect(contrato.getRow(totalRow).getCell(17).value).toBeGreaterThan(0)
+
     const ratios = workbook.getWorksheet('Ratios')!
     expect(ratios.getRow(6).getCell(1).value).toBe('Grupo')
     expect(ratios.getRow(6).getCell(9).value).toBe('Margen')

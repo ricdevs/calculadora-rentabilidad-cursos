@@ -5,7 +5,7 @@ import { RatiosTable } from '@/components/RatiosTable'
 import { SectionCollapsible } from '@/components/SectionCollapsible'
 import { SummaryCards } from '@/components/SummaryCards'
 import { Button } from '@/components/ui/button'
-import { computePortfolio, withMetrics } from '@/lib/calculations'
+import { computePortfolio, computeRows } from '@/lib/calculations'
 import {
   createBlankCourse,
   duplicateCourse,
@@ -66,8 +66,14 @@ export default function App() {
       ? selectedId
       : (courses[0]?.id ?? null)
 
-  const rows = useMemo(() => courses.map(withMetrics), [courses])
-  const totals = useMemo(() => computePortfolio(courses), [courses])
+  const rows = useMemo(
+    () => computeRows(courses, contract),
+    [courses, contract],
+  )
+  const totals = useMemo(
+    () => computePortfolio(courses, contract),
+    [courses, contract],
+  )
 
   function patchCourse(id: string, patch: Partial<CourseConfig>) {
     setCourses((current) =>
@@ -104,8 +110,9 @@ export default function App() {
         <div className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 sm:flex-row sm:items-center sm:justify-between">
           <p>
             El ejemplo de partida es un <strong>acuerdo ilustrativo</strong> con
-            varios grupos. Sustituye empresa, tarifas, €/h de profesor y CAC
-            reales antes de cotizar.
+            varios grupos y un cálculo FUNDAE (formación programada). Sustituye
+            empresa, plantilla, tarifas, €/h de profesor y CAC reales antes de
+            cotizar.
           </p>
           <div className="flex shrink-0 flex-wrap gap-2">
             <Button
@@ -133,8 +140,8 @@ export default function App() {
           title="Totales del contrato"
           description={
             contract.company
-              ? `${contract.name} · ${contract.company}. Suma de todos los grupos del acuerdo.`
-              : `${contract.name}. Suma de todos los grupos del acuerdo.`
+              ? `${contract.name} · ${contract.company}. Contribución de la academia y neto FUNDAE de la empresa.`
+              : `${contract.name}. Contribución de la academia y neto FUNDAE de la empresa.`
           }
           open={folds.summary}
           onOpenChange={(open) => setFold('summary', open)}
@@ -185,7 +192,7 @@ export default function App() {
         <SectionCollapsible
           id="ratios"
           title="Rentabilidades y ratios clave"
-          description="Métricas de cada grupo y, al pie, el contrato entero. Margen de contribución (profesor + CAC), no beneficio neto del centro. Verde ≥ 40 %, ámbar ≥ 20 %."
+          description="Métricas de cada grupo y, al pie, el contrato entero. Margen de contribución (profesor + CAC) de la academia, más bonificación y neto FUNDAE de la empresa. Verde ≥ 40 %, ámbar ≥ 20 %."
           open={folds.ratios}
           onOpenChange={(open) => setFold('ratios', open)}
         >
@@ -213,7 +220,7 @@ export default function App() {
         <SectionCollapsible
           id="formulas"
           title="Cómo se calcula"
-          description="El profesor imparte el grupo durante todas las horas del alumno. El tamaño de clase diluye ese coste."
+          description="El profesor imparte el grupo durante todas las horas del alumno. El tamaño de clase diluye ese coste. FUNDAE es el crédito de la empresa, no un ingreso extra de la academia."
           open={folds.formulas}
           onOpenChange={(open) => setFold('formulas', open)}
         >

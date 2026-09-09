@@ -1,7 +1,9 @@
 import { fieldSpec, type SweepAxis } from '@/lib/fields'
+import { computeFundaeGroups } from '@/lib/fundae'
 import {
   PUBLIC_GROUP_SIZE_CAP,
   type BreakEvenPoint,
+  type Contract,
   type CourseConfig,
   type CourseMetrics,
   type CourseRow,
@@ -76,12 +78,30 @@ export function computeMetrics(config: CourseConfig): CourseMetrics {
   }
 }
 
-export function withMetrics(config: CourseConfig): CourseRow {
-  return { ...config, metrics: computeMetrics(config) }
+export function computeRows(
+  configs: CourseConfig[],
+  contract: Contract,
+): CourseRow[] {
+  const fundae = computeFundaeGroups(configs, contract)
+  return configs.map((config, index) => ({
+    ...config,
+    metrics: computeMetrics(config),
+    fundae: fundae[index],
+  }))
 }
 
-export function computePortfolio(configs: CourseConfig[]): PortfolioTotals {
-  const rows = configs.map(withMetrics)
+export function withMetrics(
+  config: CourseConfig,
+  contract: Contract,
+): CourseRow {
+  return computeRows([config], contract)[0]
+}
+
+export function computePortfolio(
+  configs: CourseConfig[],
+  contract: Contract,
+): PortfolioTotals {
+  const rows = computeRows(configs, contract)
   const revenue = rows.reduce((sum, row) => sum + row.metrics.revenuePerGroup, 0)
   const teacherCost = rows.reduce(
     (sum, row) => sum + row.metrics.teacherCostPerGroup,
@@ -98,6 +118,8 @@ export function computePortfolio(configs: CourseConfig[]): PortfolioTotals {
     (sum, row) => sum + row.metrics.teacherHours,
     0,
   )
+  const fundaeBonus = rows.reduce((sum, row) => sum + row.fundae.bonus, 0)
+  const companyNet = revenue - fundaeBonus
 
   return {
     revenue,
@@ -112,6 +134,11 @@ export function computePortfolio(configs: CourseConfig[]): PortfolioTotals {
     groupCount: configs.length,
     studentCount,
     teacherHours,
+    fundaeBonus,
+    companyNet,
+    fundaeCoveragePct: safeDivide(fundaeBonus, revenue) ?? 0,
+    fundaeEnabledCount: rows.filter((row) => row.fundae.enabled).length,
+    fundaeCreditScaled: rows.some((row) => row.fundae.creditScaled),
   }
 }
 

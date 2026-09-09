@@ -12,7 +12,9 @@ import {
   type ChartVisibility,
   type Contract,
   type CourseConfig,
+  type FundaeModality,
   type SectionFolds,
+  type WorkforceBand,
 } from '@/lib/types'
 
 type StoredV1 = {
@@ -43,10 +45,58 @@ function isCourse(value: unknown): value is CourseConfig {
   )
 }
 
+const WORKFORCE_BANDS: WorkforceBand[] = [
+  '1-5',
+  '6-9',
+  '10-49',
+  '50-249',
+  '250+',
+]
+
+const FUNDAE_MODALITIES: FundaeModality[] = [
+  'none',
+  'presencial-basico',
+  'presencial-superior',
+  'teleformacion',
+]
+
+function isWorkforceBand(value: unknown): value is WorkforceBand {
+  return (
+    typeof value === 'string' &&
+    (WORKFORCE_BANDS as string[]).includes(value)
+  )
+}
+
+function isFundaeModality(value: unknown): value is FundaeModality {
+  return (
+    typeof value === 'string' &&
+    (FUNDAE_MODALITIES as string[]).includes(value)
+  )
+}
+
 function isContract(value: unknown): value is Contract {
   if (!value || typeof value !== 'object') return false
   const row = value as Contract
   return typeof row.name === 'string' && typeof row.company === 'string'
+}
+
+function pickContract(row: Contract): Contract {
+  const credit = row.fundaeCredit
+  return {
+    name: row.name,
+    company: row.company,
+    workforceBand: isWorkforceBand(row.workforceBand)
+      ? row.workforceBand
+      : exampleContract.workforceBand,
+    fundaeCredit:
+      typeof credit === 'number' && Number.isFinite(credit) && credit >= 0
+        ? credit
+        : null,
+    trainingInWorkHours:
+      typeof row.trainingInWorkHours === 'boolean'
+        ? row.trainingInWorkHours
+        : true,
+  }
 }
 
 function pickCourse(row: CourseConfig): CourseConfig {
@@ -59,6 +109,9 @@ function pickCourse(row: CourseConfig): CourseConfig {
     classSize: row.classSize,
     teacherHourlyCost: row.teacherHourlyCost,
     customerAcquisitionCost: row.customerAcquisitionCost,
+    fundaeModality: isFundaeModality(row.fundaeModality)
+      ? row.fundaeModality
+      : 'none',
   }
 }
 
@@ -96,7 +149,7 @@ export function loadState(): {
     if (parsed.version === STORAGE_VERSION) {
       return {
         contract: isContract(parsed.contract)
-          ? parsed.contract
+          ? pickContract(parsed.contract)
           : { ...exampleContract },
         courses: sanitizeCourses(parsed.courses),
         charts,

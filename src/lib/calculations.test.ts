@@ -4,7 +4,7 @@ import {
   computePortfolio,
   sweepCourse,
 } from '@/lib/calculations'
-import type { CourseConfig } from '@/lib/types'
+import type { Contract, CourseConfig } from '@/lib/types'
 import { describe, expect, it } from 'vitest'
 
 const acceptance: CourseConfig = {
@@ -14,8 +14,17 @@ const acceptance: CourseConfig = {
   pricePerStudent: 780,
   hoursPerStudent: 72,
   classSize: 8,
-  teacherHourlyCost: 22,
-  customerAcquisitionCost: 70,
+    teacherHourlyCost: 22,
+    customerAcquisitionCost: 70,
+    fundaeModality: 'none',
+  }
+
+  const testContract: Contract = {
+  name: 'Test',
+  company: 'Test',
+  workforceBand: '10-49',
+  fundaeCredit: null,
+  trainingInWorkHours: true,
 }
 
 describe('computeMetrics', () => {
@@ -78,8 +87,9 @@ describe('computePortfolio', () => {
       classSize: 1,
       teacherHourlyCost: 28,
       customerAcquisitionCost: 50,
+      fundaeModality: 'none',
     }
-    const totals = computePortfolio([acceptance, particular])
+    const totals = computePortfolio([acceptance, particular], testContract)
     expect(totals.groupCount).toBe(2)
     expect(totals.studentCount).toBe(9)
     expect(totals.teacherHours).toBe(72 + 36)
@@ -87,6 +97,8 @@ describe('computePortfolio', () => {
     expect(totals.teacherCost).toBe(1584 + 1008)
     expect(totals.cac).toBe(560 + 50)
     expect(totals.profit).toBe(totals.revenue - totals.totalCost)
+    expect(totals.fundaeBonus).toBe(0)
+    expect(totals.companyNet).toBe(totals.revenue)
   })
 })
 

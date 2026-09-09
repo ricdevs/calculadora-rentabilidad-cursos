@@ -39,9 +39,38 @@ export function Formulas() {
           </li>
         </ul>
         <p>
-          Esto es <strong>margen de contribución</strong>: no incluye alquiler,
-          administración, plataforma ALTEA ni cotizaciones. En FUNDAE el precio
-          que ve la empresa puede no coincidir con lo que ingresa la academia.
+          Esto es <strong>margen de contribución</strong> de la academia: no
+          incluye alquiler, administración, plataforma ALTEA ni cotizaciones.
+        </p>
+        <p>
+          <strong>FUNDAE</strong> no paga a la academia. La empresa abona la
+          factura y después descuenta una bonificación de las cotizaciones a la
+          Seguridad Social (Sistema Red, casilla 763). El techo de cada grupo es
+          el mínimo de tres límites:
+        </p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>Factura del grupo (precio × alumnos)</li>
+          <li>
+            Módulo económico (Orden TAS/2307/2007): horas × participantes ×
+            €/h de la modalidad. Presencial / aula virtual básico 9 €,
+            superior 13 €, teleformación 7,50 €. Plantillas de 1–9 no tienen
+            tope de módulo; 10–49 pueden superarlo un 10 %; 50–249 un 5 %. En
+            2026 el aula virtual se bonifica como presencial
+            (BOE-A-2025-25790).
+          </li>
+          <li>
+            Cofinanciación privada (Ley 30/2015 art. 11.5): 1–5 = 0 %, 6–9 =
+            5 %, 10–49 = 10 %, 50–249 = 20 %, 250+ = 40 %. Si la formación es
+            en jornada, el salario de los alumnos cubre esa parte y el techo
+            puede llegar a la factura. Si no, la bonificación máxima es factura
+            × (1 − %).
+          </li>
+        </ul>
+        <p>
+          Si indicas el crédito anual de la empresa y la suma de grupos lo
+          supera, se prorratea. El neto empresa es factura − bonificación. No
+          uses los módulos de la convocatoria de oferta formativa (15,4 / 8,9
+          €): son otra línea de ayudas.
         </p>
       </div>
     </div>
