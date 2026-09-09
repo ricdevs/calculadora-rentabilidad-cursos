@@ -95,7 +95,7 @@ export function SummaryCards({ totals }: { totals: PortfolioTotals }) {
   ]
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-card">
+    <div className="w-fit max-w-full overflow-hidden rounded-lg border border-border bg-card">
       <div className="flex flex-wrap divide-x divide-border">
         {academy.map((stat) => (
           <StatCell key={stat.label} {...stat} />
