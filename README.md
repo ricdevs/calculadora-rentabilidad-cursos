@@ -10,7 +10,7 @@ Los datos se quedan en el navegador. No hay login ni servidor.
 2. **Totales del contrato** — ingresos, costes y contribución de la academia, más bonificación FUNDAE, % cubierto y neto de la empresa.
 3. **Rentabilidades y ratios** — coste profesor/alumno, beneficio, margen, ROI, equilibrio, y columnas FUNDAE por grupo.
 4. **Análisis de configuración** — gráfico de líneas de un grupo, con el cruce ingresos / coste total (punto de equilibrio) y deslizadores en tiempo real.
-5. **Gráficos conmutables** — costes vs ingresos, beneficio, composición de costes, margen y equilibrio vs tamaño actual.
+5. **Gráficos conmutables** — costes vs ingresos, beneficio, composición de costes, margen y equilibrio vs tamaño actual. Cada gráfico se puede ampliar a pantalla (Esc para cerrar; flechas para pasar al siguiente).
 
 Todas las secciones salvo **Configuraciones de curso** se pueden plegar.
 

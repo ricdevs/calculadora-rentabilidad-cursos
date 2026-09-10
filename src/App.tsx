@@ -197,7 +197,7 @@ export default function App() {
         <SectionCollapsible
           id="charts"
           title="Gráficos"
-          description="Comparación entre los grupos de este acuerdo. Activa solo los que te ayuden a decidir: abrir un grupo, subir precio o bajar CAC."
+          description="Comparación entre los grupos de este acuerdo. Activa solo los que te ayuden a decidir, o amplía uno para verlo a pantalla."
           open={folds.charts}
           onOpenChange={(open) => setFold('charts', open)}
         >
