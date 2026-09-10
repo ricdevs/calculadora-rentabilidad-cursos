@@ -96,7 +96,7 @@ export function ChartsPanel({
   const active = chartMeta.filter((chart) => visibility[chart.id])
 
   return (
-    <section className="rounded-lg border border-border bg-card">
+    <section className="rounded-md border border-border bg-card">
       <div className="px-4 py-4 sm:px-5">
         <div className="flex flex-wrap gap-x-5 gap-y-3">
           {chartMeta.map((chart) => (

@@ -42,7 +42,7 @@ export function RatiosTable({
   totals: PortfolioTotals
 }) {
   return (
-    <section className="rounded-lg border border-border bg-card">
+    <section className="rounded-md border border-border bg-card">
       {rows.length === 0 ? (
         <p className="text-muted-foreground px-5 py-4 text-sm">
           Añade un grupo para ver ratios.

@@ -29,7 +29,7 @@ export function SectionCollapsible({
         onClick={() => onOpenChange(!open)}
       >
         <div className="min-w-0">
-          <h2 className="font-heading text-base font-semibold">{title}</h2>
+          <h2 className="text-[15px] font-medium tracking-tight">{title}</h2>
           {description ? (
             <p className="text-muted-foreground mt-0.5 max-w-2xl text-[13px] leading-snug">
               {description}

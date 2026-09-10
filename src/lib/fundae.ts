@@ -21,15 +21,9 @@ export const FUNDAE_MODALITY_OPTIONS: {
   label: string
 }[] = [
   { value: 'none', label: 'Sin bonificar' },
-  {
-    value: 'presencial-basico',
-    label: 'Presencial / aula virtual · básico (9 €/h)',
-  },
-  {
-    value: 'presencial-superior',
-    label: 'Presencial / aula virtual · superior (13 €/h)',
-  },
-  { value: 'teleformacion', label: 'Teleformación (7,50 €/h)' },
+  { value: 'presencial-basico', label: 'Presencial básico' },
+  { value: 'presencial-superior', label: 'Presencial superior' },
+  { value: 'teleformacion', label: 'Teleformación' },
 ]
 
 export const WORKFORCE_OPTIONS: {

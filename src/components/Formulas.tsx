@@ -1,6 +1,6 @@
 export function Formulas() {
   return (
-    <div className="text-muted-foreground rounded-lg border border-border bg-card px-4 py-3 text-[13px]">
+    <div className="text-muted-foreground rounded-md border border-border bg-card px-4 py-3 text-[13px]">
       <div className="max-w-3xl space-y-3">
         <p>
           Un profesor está con el grupo durante <strong>todas las horas del

@@ -11,19 +11,17 @@ type Stat = {
 
 function StatCell({ label, value, hint, negative }: Stat) {
   return (
-    <div className="min-w-[7.5rem] shrink-0 px-3 py-2">
-      <p className="text-muted-foreground text-[10px] font-medium tracking-[0.16em] uppercase">
-        {label}
-      </p>
+    <div className="min-w-0 bg-card px-4 py-3.5">
+      <p className="text-muted-foreground text-[11px] leading-none">{label}</p>
       <p
         className={cn(
-          'font-heading mt-0.5 text-[1.05rem] leading-none font-semibold tracking-tight tabular-nums',
+          'font-heading mt-1.5 text-[1.35rem] leading-none font-medium tracking-tight tabular-nums',
           negative ? 'text-destructive' : 'text-foreground',
         )}
       >
         {value}
       </p>
-      <p className="text-muted-foreground mt-1 text-[11px] leading-none">
+      <p className="text-muted-foreground mt-1.5 text-[11px] leading-none">
         {hint}
       </p>
     </div>
@@ -58,7 +56,7 @@ export function SummaryCards({ totals }: { totals: PortfolioTotals }) {
 
   const rest: Stat[] = [
     {
-      label: 'Bonif. FUNDAE',
+      label: 'Bonificación FUNDAE',
       value: formatEuro(totals.fundaeBonus),
       hint:
         totals.fundaeEnabledCount === 0
@@ -88,20 +86,20 @@ export function SummaryCards({ totals }: { totals: PortfolioTotals }) {
       hint: 'Suma de tamaños',
     },
     {
-      label: 'Horas prof.',
+      label: 'Horas profesor',
       value: formatNumber(totals.teacherHours, 0),
       hint: 'Horas lectivas',
     },
   ]
 
   return (
-    <div className="w-fit max-w-full overflow-hidden rounded-lg border border-border bg-card">
-      <div className="flex flex-wrap divide-x divide-border">
+    <div className="overflow-hidden rounded-md border border-border">
+      <div className="grid grid-cols-2 gap-px bg-border sm:grid-cols-4">
         {academy.map((stat) => (
           <StatCell key={stat.label} {...stat} />
         ))}
       </div>
-      <div className="flex flex-wrap divide-x divide-border border-t border-border">
+      <div className="grid grid-cols-2 gap-px border-t border-border bg-border sm:grid-cols-3 lg:grid-cols-6">
         {rest.map((stat) => (
           <StatCell key={stat.label} {...stat} />
         ))}

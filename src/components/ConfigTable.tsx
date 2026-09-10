@@ -28,13 +28,11 @@ import {
 import { Copy, Plus, Trash2 } from 'lucide-react'
 
 const selectClassName = cn(
-  'h-7 w-full max-w-[13.5rem] min-w-0 rounded-md border border-input bg-card px-2 py-0.5 text-sm outline-none',
-  'focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40',
+  'h-8 w-full min-w-0 rounded-md border border-input bg-background px-2.5 text-sm outline-none',
+  'focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30',
 )
 
-const fieldClassName = 'flex w-[13.5rem] max-w-full flex-col gap-0.5'
-const wideFieldClassName = 'flex w-[16.5rem] max-w-full flex-col gap-0.5'
-const labelClassName = 'text-muted-foreground text-[10px] tracking-[0.08em] uppercase'
+const labelClassName = 'text-muted-foreground mb-1 block text-[11px]'
 
 type Props = {
   contract: Contract
@@ -56,9 +54,9 @@ function FieldGrid({
   onChange: Props['onChange']
 }) {
   return (
-    <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+    <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
       {CONFIG_FIELDS.map((field) => (
-        <label key={field.key} className="flex max-w-[8.5rem] flex-col gap-0.5">
+        <label key={field.key} className="min-w-0">
           <span className={labelClassName}>{field.label}</span>
           <NumberField
             min={0}
@@ -68,6 +66,7 @@ function FieldGrid({
             invalid={
               field.key === 'classSize' && group.classSize > PUBLIC_GROUP_SIZE_CAP
             }
+            className="w-full"
             onChange={(value) => onChange(group.id, { [field.key]: value })}
           />
         </label>
@@ -106,15 +105,15 @@ export function ConfigTable({
   onRemove,
 }: Props) {
   return (
-    <section className="rounded-lg border border-border bg-card">
-      <div className="flex flex-wrap items-start justify-between gap-3 px-4 py-3">
+    <section className="rounded-md border border-border bg-card">
+      <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border px-5 py-4">
         <div>
-          <h2 className="font-heading text-base font-semibold">
+          <h2 className="font-heading text-lg font-medium">
             Configuraciones de curso
           </h2>
-          <p className="text-muted-foreground mt-0.5 max-w-xl text-[13px] leading-snug">
-            Cada fila es un grupo del acuerdo. FUNDAE (modalidad, plantilla,
-            crédito) es de la empresa y se aplica a todo el contrato.
+          <p className="text-muted-foreground mt-1 max-w-2xl text-[13px] leading-relaxed">
+            Cada fila es un grupo. Modalidad, plantilla y crédito FUNDAE son de
+            la empresa y se aplican a todo el acuerdo.
           </p>
         </div>
         <Button onClick={onAdd} size="sm" className="shrink-0">
@@ -123,30 +122,28 @@ export function ConfigTable({
         </Button>
       </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-2.5 px-4 pb-3">
-        <label className={wideFieldClassName}>
+      <div className="grid grid-cols-1 gap-x-5 gap-y-3 px-5 py-4 sm:grid-cols-2 lg:grid-cols-4">
+        <label className="min-w-0">
           <span className={labelClassName}>Nombre del acuerdo</span>
           <Input
             value={contract.name}
             aria-label="Nombre del acuerdo"
-            className="bg-card"
             onChange={(event) =>
               onContractChange({ name: event.target.value })
             }
           />
         </label>
-        <label className={wideFieldClassName}>
+        <label className="min-w-0">
           <span className={labelClassName}>Empresa / cliente</span>
           <Input
             value={contract.company}
             aria-label="Empresa o cliente"
-            className="bg-card"
             onChange={(event) =>
               onContractChange({ company: event.target.value })
             }
           />
         </label>
-        <label className={fieldClassName}>
+        <label className="min-w-0">
           <span className={labelClassName}>Plantilla</span>
           <select
             aria-label="Plantilla de la empresa"
@@ -165,7 +162,7 @@ export function ConfigTable({
             ))}
           </select>
         </label>
-        <label className={fieldClassName}>
+        <label className="min-w-0">
           <span className={labelClassName}>Modalidad FUNDAE</span>
           <select
             aria-label="Modalidad FUNDAE de la empresa"
@@ -184,7 +181,7 @@ export function ConfigTable({
             ))}
           </select>
         </label>
-        <label className={fieldClassName}>
+        <label className="min-w-0">
           <span className={labelClassName}>Crédito anual (€)</span>
           <Input
             type="number"
@@ -193,7 +190,7 @@ export function ConfigTable({
             step={50}
             placeholder="Sin tope"
             aria-label="Crédito FUNDAE anual"
-            className="bg-card text-right tabular-nums"
+            className="text-right tabular-nums"
             value={contract.fundaeCredit ?? ''}
             onChange={(event) => {
               const next = event.target.value
@@ -208,17 +205,16 @@ export function ConfigTable({
             }}
           />
         </label>
-        <label className="flex min-h-7 items-end gap-2 pb-0.5">
+        <label className="flex min-w-0 items-end gap-2.5 pb-0.5 sm:col-span-2">
           <Switch
-            size="sm"
             checked={contract.trainingInWorkHours}
             onCheckedChange={(checked) =>
               onContractChange({ trainingInWorkHours: checked })
             }
           />
-          <span className="text-[13px] leading-tight">
+          <span className="text-sm leading-snug">
             Formación en jornada
-            <span className="text-muted-foreground mt-0.5 block text-[11px]">
+            <span className="text-muted-foreground mt-0.5 block text-[12px]">
               El salario cubre la cofinanciación privada.
             </span>
           </span>
@@ -226,29 +222,28 @@ export function ConfigTable({
       </div>
 
       {groups.length === 0 ? (
-        <p className="text-muted-foreground px-5 pb-5 text-sm">
+        <p className="text-muted-foreground border-t border-border px-5 py-4 text-sm">
           No hay grupos en este acuerdo. Añade uno o restaura los ejemplos.
         </p>
       ) : (
         <>
-          <div className="space-y-3 px-4 pb-4 lg:hidden">
+          <div className="space-y-3 border-t border-border px-5 py-4 lg:hidden">
             {groups.map((group) => (
               <article
                 key={group.id}
-                className={`rounded-lg border bg-background p-3 ${
+                className={`rounded-md border bg-background p-3 ${
                   group.id === selectedId ? 'ring-1 ring-primary' : ''
                 }`}
                 onClick={() => onSelect(group.id)}
               >
                 <div className="mb-3 flex items-center gap-2">
                   <span
-                    className="size-3 shrink-0 rounded-full"
+                    className="size-2.5 shrink-0 rounded-full"
                     style={{ background: group.color }}
                   />
                   <Input
                     value={group.name}
                     aria-label="Nombre del grupo"
-                    className="bg-card"
                     onChange={(event) =>
                       onChange(group.id, { name: event.target.value })
                     }
@@ -285,15 +280,17 @@ export function ConfigTable({
             ))}
           </div>
 
-          <div className="hidden overflow-x-auto lg:block">
-            <Table className="!w-auto">
+          <div className="hidden border-t border-border lg:block">
+            <Table>
               <TableHeader>
-                <TableRow className="bg-muted/40 hover:bg-muted/40">
-                  <TableHead>Grupo / módulo</TableHead>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="w-[28%] px-5">Grupo / módulo</TableHead>
                   {CONFIG_FIELDS.map((field) => (
-                    <TableHead key={field.key}>{field.label}</TableHead>
+                    <TableHead key={field.key} className="text-right">
+                      {field.label}
+                    </TableHead>
                   ))}
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead className="w-20 px-5 text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -303,16 +300,16 @@ export function ConfigTable({
                     className={group.id === selectedId ? 'bg-muted/40' : undefined}
                     onClick={() => onSelect(group.id)}
                   >
-                    <TableCell>
-                      <div className="flex items-center gap-2">
+                    <TableCell className="px-5">
+                      <div className="flex items-center gap-2.5">
                         <span
-                          className="size-2.5 shrink-0 rounded-full"
+                          className="size-2 shrink-0 rounded-full"
                           style={{ background: group.color }}
                         />
                         <Input
                           value={group.name}
                           aria-label="Nombre del grupo"
-                          className="w-36 bg-card"
+                          className="bg-background"
                           onChange={(event) =>
                             onChange(group.id, { name: event.target.value })
                           }
@@ -321,7 +318,7 @@ export function ConfigTable({
                     </TableCell>
                     {CONFIG_FIELDS.map((field) => (
                       <TableCell key={field.key}>
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col items-end gap-1">
                           <NumberField
                             min={0}
                             step={field.step}
@@ -351,8 +348,8 @@ export function ConfigTable({
                         </div>
                       </TableCell>
                     ))}
-                    <TableCell>
-                      <div className="flex justify-end gap-1">
+                    <TableCell className="px-5">
+                      <div className="flex justify-end gap-0.5">
                         <Button
                           variant="ghost"
                           size="icon-sm"

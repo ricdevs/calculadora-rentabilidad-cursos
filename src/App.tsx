@@ -36,7 +36,7 @@ const AnalysisChart = lazy(() =>
 
 function ChartFallback() {
   return (
-    <div className="text-muted-foreground rounded-lg border border-border bg-card p-4 text-[13px]">
+    <div className="text-muted-foreground rounded-md border border-border bg-card p-4 text-[13px]">
       Cargando gráficos…
     </div>
   )
@@ -106,15 +106,14 @@ export default function App() {
   return (
     <div className="min-h-svh">
       <Header />
-      <main className="mx-auto flex max-w-[1120px] flex-col gap-4 px-4 py-5 sm:px-6">
-        <div className="flex flex-col gap-2.5 rounded-lg border border-border border-l-gold bg-card px-3.5 py-2.5 text-[13px] sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            El ejemplo de partida es un <strong>acuerdo ilustrativo</strong> con
-            varios grupos y un cálculo FUNDAE (formación programada). Sustituye
+      <main className="mx-auto flex max-w-[1080px] flex-col gap-8 px-4 py-6 sm:px-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between">
+          <p className="text-muted-foreground max-w-2xl text-[13px] leading-relaxed">
+            Ejemplo ilustrativo con varios grupos y un cálculo FUNDAE. Sustituye
             empresa, plantilla, tarifas, €/h de profesor y CAC reales antes de
             cotizar.
           </p>
-          <div className="flex shrink-0 flex-wrap gap-2">
+          <div className="flex shrink-0 gap-2">
             <Button
               variant="outline"
               size="sm"

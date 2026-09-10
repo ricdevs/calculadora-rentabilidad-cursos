@@ -88,7 +88,7 @@ export function AnalysisChart({
 
   if (!selected) {
     return (
-      <section className="rounded-lg border border-border bg-card p-4 text-[13px] text-muted-foreground">
+      <section className="rounded-md border border-border bg-card p-4 text-[13px] text-muted-foreground">
         Añade un grupo para analizar la configuración.
       </section>
     )
@@ -100,7 +100,7 @@ export function AnalysisChart({
     intersection.x <= spec.max
 
   return (
-    <section className="rounded-lg border border-border bg-card">
+    <section className="rounded-md border border-border bg-card">
       <div className="px-4 py-4 sm:px-5">
         <div className="flex flex-wrap gap-2">
           {courses.map((course) => (
